@@ -1,0 +1,110 @@
+export const modList = [
+    {
+        name: '火炮瞄具绿色',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/NMLBZz51.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: 'https://down.fucnm.com/FLiNGTrainer_setup.exe',
+        categorize: '瞄准'
+    },
+    {
+        name: '[日语]非常吵的雪风大人语音包nanoda',
+        updataTime: 1715251489000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/WesHiCbc.png',
+        detailMd: '**用了可能出现以下症状nanoda：我没疯nanoda！**\n\n\n\n[视频预览](https://www.bilibili.com/video/BV1qa411n7e5)\n\n\n\n更新日志：\n\n\n\n- 2023.10.12：应网友要求加了几条语音。\n\n- 2023.3.14：更新文件，屏蔽了特殊车长语音。\n\n- 2022.7.12更新：修复了起火的音效过大的问题\n\n\n\n特别提示：由于本语音修改了声音设置，和一些炮声插件等不兼容。',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: 'https://vip.123pan.cn/1815268517/chajiancunfang/SU/japan.zip',
+        categorize: '语音'
+    },
+    {
+        name: '战争雷霆炮声',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/WV6dWBwc.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: '炮声'
+    },
+    {
+        name: '偶游盒子风格巨响图标',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/ReZFgmgg.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: '面板'
+    },
+    {
+        name: '细长血条+飘血',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/MLmQlyCh.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: '美化'
+    },
+    {
+        name: '金币车金色图标显示',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/N04Z3O1C.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: '车库'
+    },
+    {
+        name: '距离标记汉化版',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/GB5WAeDH.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: '功能'
+    },
+    {
+        name: '坦克编号编辑器',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: 'https://img2.imgtp.com/2024/05/09/XSL3dxur.png',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: '涂装'
+    },
+    {
+        name: '一个vip插件',
+        updataTime: 1715243329000,
+        gameVersion: '1.26.0.0',
+        headImg: '',
+        detailMd: '',
+        size: '13MB',
+        author: '',
+        transport: '',
+        download: '',
+        categorize: 'VIP'
+    }
+]
