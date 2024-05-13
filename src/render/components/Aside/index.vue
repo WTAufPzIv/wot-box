@@ -24,6 +24,12 @@
         <p>游戏汉化</p>
       </div>
     </router-link>
+    <router-link to="/user-account">
+      <div :class="['nav', route.name === 'icon.user-account' ? 'active': '']">
+        <UserOutlined />
+        <p>我的账号</p>
+      </div>
+    </router-link>
     <router-link to="/gamer-info">
       <div :class="['nav', route.name === 'icon.gamer-info' ? 'active': '']">
         <SearchOutlined />
@@ -42,19 +48,19 @@
         <p>赞助投喂</p>
       </div>
     </router-link>
-    <router-link to="/admin">
+    <!-- <router-link to="/admin">
       <div :class="['nav', route.name === 'icon.admin' ? 'active': '']">
         <LockOutlined />
         <p>管理员</p>
       </div>
-    </router-link>
+    </router-link> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import {
   HeartOutlined,
-  LockOutlined,
+  UserOutlined,
   SearchOutlined,
   FolderOpenOutlined,
   ToolOutlined,

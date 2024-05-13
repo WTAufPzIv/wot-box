@@ -1,7 +1,12 @@
 <template>
-    <page>
-      <router-view></router-view>
-    </page>
+  <page>
+      <!-- <router-view></router-view> -->
+      <router-view v-slot="slotProps">
+        <keep-alive>
+          <component :is="slotProps.Component"></component>
+        </keep-alive>
+      </router-view>
+  </page>
 </template>
 
 <script setup lang="ts">

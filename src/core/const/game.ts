@@ -40,13 +40,13 @@ export enum ClassEnum {
 }
 
 export enum ModType {
-    aim = '瞄准',
-    sound = '语音',
-    gun_sound = '炮声',
-    interface = '界面',
-    beautify = '美化',
-    hangar = '车库',
-    tool = '功能',
-    skins = '涂装',
-    vip = 'VIP'
+    瞄准 = '瞄准',
+    语音 = '语音',
+    炮声 = '炮声',
+    面板 = '面板',
+    美化 = '美化',
+    车库 = '车库',
+    功能 = '功能',
+    涂装 = '涂装',
+    VIP = 'VIP'
 }

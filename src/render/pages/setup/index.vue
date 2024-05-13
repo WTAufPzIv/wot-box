@@ -1,34 +1,50 @@
 
 <template>
   <div class="setup-wrapper">
-    <p class="setup-title">游戏路径</p>
-    <div class="game-path">
-      <div class="path-value">
-        <p>{{ gameState.gameInstallations?.path || '' }}</p>
+    <div class="setup-item">
+      <p class="setup-title">游戏路径</p>
+      <div class="game-path">
+        <div class="path-value">
+          <p>{{ gameState.gameInstallations?.path || '' }}</p>
+        </div>
+        <div class="add-button download" @click="handleClick()">设置游戏路径</div>
+        <div class="add-button download" @click="handleOpenFolder(gameState.gameInstallations?.path || '')" v-if="gameState.gameInstallations">打开游戏目录</div>
+        <!-- <a class="add-button" @click="handleClick">
+          <span>
+            设置游戏路径
+          </span>
+        </a>
+        <a class="add-button" @click="handleOpenFolder(gameState.gameInstallations?.path || '')" v-if="gameState.gameInstallations">
+          <span>
+            打开游戏目录
+          </span>
+        </a> -->
       </div>
-      <a class="add-button" @click="handleClick">
-        <span>
-          设置游戏路径
-        </span>
-      </a>
-      <a class="add-button" @click="handleOpenFolder(gameState.gameInstallations?.path || '')" v-if="gameState.gameInstallations">
-        <span>
-          打开游戏目录
-        </span>
-      </a>
+      <div class="ext-info" v-if="gameState.gameInstallations">
+        <p>游戏名称：{{ gameState.gameInstallations?.gameName || '' }}</p>
+        <p>游戏版本：{{ gameState.gameInstallations?.gameVersion || '' }}</p>
+      </div>
     </div>
-    <div class="ext-info" v-if="gameState.gameInstallations">
-      <p>游戏名称：{{ gameState.gameInstallations?.gameName || '' }}</p>
-      <p>游戏版本：{{ gameState.gameInstallations?.gameVersion || '' }}</p>
+    <div class="setup-item">
+      <p class="setup-title">其他</p>
+      <div class = "other-btn">
+        <div class="btn" @click="handleCheckVersion()">检查更新</div>
+        <div class="btn" @click="handleClearAppData()">清除应用数据</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { StoreModule } from '@core/const/store';
-import { ipcMessageTool } from '@core/utils/game';
-import { toRef } from 'vue';
+import { deleteAppData, ipcMessageTool, restartApp } from '@core/utils/game';
+import { toRef, h } from 'vue';
 import { useStore } from 'vuex';
+import { Modal } from 'ant-design-vue';
+import {
+    ExclamationCircleOutlined,
+} from '@ant-design/icons-vue'
+import { sleep } from '@src/render/utils/common';
 
 const Store = useStore();
 const gameState = toRef(Store.state[StoreModule.GAME])
@@ -40,12 +56,62 @@ function handleClick() {
 function handleOpenFolder(path: string) {
   ipcMessageTool('file', 'open-folder', { path });
 }
+
+function handleCheckVersion() {
+
+}
+function handleClearAppData() {
+  Modal.confirm({
+      title: '当您遇到盒子功能异常，可以尝试清除盒子应用数据，此举将删除您添加的游戏路径和绑定的游戏账号，并重启盒子，确认继续？',
+      icon: h(ExclamationCircleOutlined),
+      async onOk() {
+          try {
+            const res = await deleteAppData();
+            if (res.status) {
+              await sleep(1000);
+              restartApp()
+            } else {
+              Modal.error({
+                title: `数据清除失败：${JSON.stringify(res.message)}`,
+                class: 'custom-error-dialog',
+                okText: '知道了',
+              });
+            }
+          } catch(err) {
+            Modal.error({
+                title: `数据清除失败：${JSON.stringify(err)}`,
+                class: 'custom-error-dialog',
+                okText: '知道了',
+            });
+          }
+      },
+      okText: '确认',
+      cancelText: '取消',
+      class: 'custom-error-dialog'
+  });
+}
 </script>
 
 
 <style scoped lang="less">
+.download {
+    color: #f25322;
+    box-shadow: none;
+    background: 0 0;
+    border: 2px solid #f25322;
+    padding: 15px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover {
+        color: #fff;
+        background: #f25322;
+    }
+}
 .setup-wrapper {
   width: 1000px;
+  .setup-item {
+    margin-bottom: 50px;
+  }
   .setup-title {
     color: #e9e2bf;
     font-size: 24px;
@@ -73,61 +139,19 @@ function handleOpenFolder(path: string) {
     }
   }
   .add-button {
-    padding: 0 22px;
-    box-shadow: 0 2px 0 #661000, inset 0 0 8px rgba(255,210,0,.1), inset 0 1px 0 #fab81b, inset 0 -1px 0 #ef4511;
-    background: linear-gradient(to bottom,#fab81b 0%,#ef4511 100%) no-repeat 0,linear-gradient(to bottom,#fab81b 0%,#ef4511 100%) no-repeat 100%,#f25322 linear-gradient(to bottom,#f60 0%,#a6230e 100%) no-repeat;
-    background-size: 1px 100%,1px 100%,cover;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
-    -ms-flex-align: center;
+    display: flex;
     align-items: center;
-    -ms-flex-pack: center;
     justify-content: center;
-    vertical-align: middle;
     font-size: 14px;
     font-weight: 700;
-    line-height: 14px;
-    color: #f9f5e1;
-    text-transform: uppercase;
-    text-shadow: 0 -1px rgba(71,0,0,.3);
-    text-decoration: none;
-    border-radius: 1px;
-    position: relative;
-    box-sizing: border-box;
     height: 44px;
-    white-space: nowrap;
-    margin-left: 24px;
-    cursor: pointer;
-    transition: color .15s ease-out;
+    margin-left: 18px;
     span {
       z-index: 2;
       font-size: 14px;
       margin: 0;
       padding: 0;
-      color: #f9f5e1;
     }
-  }
-  .add-button:after {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    content: "";
-    box-shadow: inset 0 0 8px rgba(255,210,0,.1), inset 0 1px 0 #fab81b, inset 0 -1px 0 #ff7e00;
-    background: linear-gradient(to bottom,#fab81b 0%,#ff7e00 100%) no-repeat 0,linear-gradient(to bottom,#fab81b 0%,#ff7e00 100%) no-repeat 100%,#ff7e00 linear-gradient(to bottom,#ff7e00 0%,#c2530a 100%) no-repeat;
-    background-size: 1px 100%,1px 100%,cover;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.15s ease-out;
-    will-change: opacity;
-  }
-  .add-button:hover {
-    color: #f9f5e1;
-    cursor: pointer;
-  }
-  .add-button:hover:after {
-    opacity: 1;
   }
   .ext-info {
     margin-top: 14px;
@@ -139,6 +163,28 @@ function handleOpenFolder(path: string) {
         line-height: 40px;
         margin-left: 12px;
       }
+  }
+  .other-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn {
+    width: 200px;
+    height: 25px;
+    text-align: center;
+    line-height: 24px;
+    margin-bottom: 15px;
+    color: #b8b8a2;
+    box-shadow: none;
+    background: 0 0;
+    border: 1px solid #b8b8a2;
+    font-size: 12px;
+    cursor: pointer;
+    &:hover {
+      color: #000;
+      background: #b8b8a2;
     }
+  }
 }
 </style>

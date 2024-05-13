@@ -94,3 +94,45 @@ export const FetchToken = () => {
 
     return SendPost(data, true)
 }
+
+export const FetchSignup = (User = '', PassWord = '', Key = '', SuperPassWord = '', Qq = '', Email = '', Phone = '') => {
+    let data = {
+        "Api": "NewUserInfo",
+        "User": User,
+        "PassWord": PassWord,
+        "Key": Key,
+        "SuperPassWord": SuperPassWord,
+        "Qq": Qq,
+        "Email": Email,
+        "Phone": Phone,
+    }
+    return SendPost(data)
+}
+
+export const FetchForget = (User = '', NewPassWord = '', SuperPassWord = '') => {
+    let data = {
+        "Api": "SetPassWord",
+        "Type": 1,
+        "User": User,
+        "NewPassWord": NewPassWord,
+        "SuperPassWord": SuperPassWord,
+    }
+    return SendPost(data)
+}
+
+export const FetchLogout = () => {
+    let data = {
+        "Api": "LogOut",
+    }
+    return SendPost(data)
+}
+
+export const FetchActivateCard = (User = '', Ka = '', InviteUser = '') => {
+    let data = {
+        "Api": "UseKa",
+        "User": User,
+        "Ka": Ka,
+        "InviteUser": InviteUser,
+    }
+    return SendPost(data)
+}

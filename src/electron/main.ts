@@ -1,15 +1,20 @@
+import { sleep } from '../core/utils/files';
 import { BrowserWindow, app, ipcMain, Tray, Menu } from 'electron'
 import ipc from '../core/utils/ipc';
 const path = require('path')
 
 let win: BrowserWindow | null;
 let loginWin: BrowserWindow | null;
-let tray = null;
+let tray: Tray | null = null;
 
 function createTray() {
     tray = new Tray(path.join(__dirname, '../public/1.jpg'));
     const contextMenu = Menu.buildFromTemplate([
-        { label: '退出', type: 'normal', click: () => { app.quit(); } }
+        { label: '退出', type: 'normal', click: async () => {
+            win?.webContents.send('app-quit');
+            // await sleep(2000);
+            app.quit();
+        }}
     ]);
     tray.setToolTip('大德盒子');
     tray.setContextMenu(contextMenu);
@@ -36,20 +41,24 @@ const createLoginWindow = () => {
     loginWin.on('closed', () => {
         loginWin = null;
     });
-    ipcMain.on('login-window-control', (event, command) => {
+    ipc(loginWin);
+    ipcMain.on('login-window-control', async (event, command) => {
         switch (command) {
-          case 'login-successful':
-            if (loginWin) {
-                loginWin.close();
-            }
-            createWindow();
-            // createTray();
-            break;
-        case 'close':
-            loginWin!.close();
-            break;
+            case 'login-successful':
+                if (loginWin) {
+                    loginWin.removeAllListeners();
+                    ipcMain.removeAllListeners();
+                    await sleep(100)
+                    loginWin.close();
+                }
+                createWindow();
+                createTray();
+                break;
+            case 'close':
+                loginWin!.close();
+                break;
         }
-      });
+    });
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
         loginWin.webContents.openDevTools();
     }
@@ -69,6 +78,20 @@ const createWindow = () => {
     })
     process.env.VITE_DEV_SERVER_URL && win.loadURL('http://localhost:3000') || win.loadFile('dist/index.html')
     ipc(win);
+    ipcMain.on('login-window-control', async (event, command) => {
+        switch (command) {
+            case 'login-out':
+                if (win) {
+                    win.removeAllListeners();
+                    ipcMain.removeAllListeners();
+                    await sleep(100)
+                    tray && tray.destroy();
+                    win.close();
+                }
+                createLoginWindow();
+                break;
+        }
+    });
     win.on('closed', () => {
         win = null;
     });
@@ -77,11 +100,8 @@ const createWindow = () => {
     }
 }
 
-// app.whenReady().then(createWindow)
-
 app.whenReady().then(async () => {
-    // createLoginWindow();
-    createWindow()
+    createLoginWindow();
 });
 
 app.on('window-all-closed', () => {

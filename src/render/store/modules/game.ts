@@ -31,7 +31,6 @@ export const mutations: MutationTree<IGameState> = {
 const actions: ActionTree<IGameState, IRootState> = {
     initGameState({ commit, dispatch, state }, payload) {
         commit(GameMutation.SET_GAME_INSTALLATIONS, payload.gameInstallations || null)
-        console.log(state.gameInstallations)
         if (state.gameInstallations) {
             dispatch('checkAllGameInstallation');
         }

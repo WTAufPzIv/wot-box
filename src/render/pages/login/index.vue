@@ -22,7 +22,7 @@
                 </div>
                 <div class="input-wrapper">
                     <a-input
-                        v-model:value="password"
+                        v-model:value="superPassword"
                         size="large"
                         placeholder="超级密码"
                         :bordered="false"
@@ -70,7 +70,7 @@
                 </div>
                 <div class="input-wrapper" v-if="active === 'signup'">
                     <a-input
-                        v-model:value="password"
+                        v-model:value="superPassword"
                         size="large"
                         placeholder="超级密码"
                         :bordered="false"
@@ -94,29 +94,115 @@
 <script setup lang="ts">
 import { CloseOutlined } from '@ant-design/icons-vue';
 import { closeLoginAndOpenMain } from '@core/utils/game';
-import { handleFetchLogin } from '@src/render/utils/fetch';
-import { ref } from 'vue';
+import { handleFetchFoeget, handleFetchLogin, handleFetchSignup } from '@src/render/utils/fetch';
+import { computed, ref, watch } from 'vue';
+// import { sleep } from '@src/render/utils/common';
+import { useStore } from 'vuex';
+import { StoreModule } from '@core/const/store';
+import { Modal } from 'ant-design-vue';
 import { sleep } from '@src/render/utils/common';
 
 const username = ref('');
 const password = ref('');
+const superPassword = ref('')
 const loading = ref(false);
 const active = ref('login')
 const forget = ref(false);
+const Store = useStore();
+const storeAccount = computed(() => Store.state[StoreModule.USER].account)
+const storePassword = computed(() => Store.state[StoreModule.USER].password)
+
+watch(storeAccount, (newVal) => {
+    username.value = newVal
+})
+
+watch(storePassword, (newVal) => {
+    password.value = newVal
+})
 
 function handleClose() {
     (window as any).electron.ipcRenderer.send('login-window-control', 'close');
 }
 async function loginAndSignup() {
-    // loading.value  =true;
-    // const res = await handleFetchLogin(username.value, password.value);
-    // console.log(res)
-    // await sleep(1000);
-    // loading.value = false;
-    closeLoginAndOpenMain()
+    if (!username.value || !password.value) return;
+    loading.value  =true;
+    if (active.value === 'login') {
+        try {
+            const res = await handleFetchLogin(username.value, password.value);
+            const { Data, Msg, Status }: any = res;
+            if (!Status) throw new Error(JSON.stringify(res));
+            if (Status !== 10000) {
+                if (Msg) {
+                    throw new Error(Msg);
+                } else {
+                    throw new Error(JSON.stringify(res));
+                }
+            }
+            Store.dispatch(`${StoreModule.USER}/setUser`, Data)
+            Store.dispatch(`${StoreModule.USER}/setAccout`, username.value)
+            Store.dispatch(`${StoreModule.USER}/setPassword`, password.value)
+            await sleep(500);
+            loading.value = false;
+            closeLoginAndOpenMain()
+        } catch(err) {
+            loading.value = false;
+            Modal.error({
+                title: `登录失败: ${err}`,
+                class: 'custom-error-dialog'
+            });
+        }
+    } else {
+        try {
+            const res = await handleFetchSignup(username.value, password.value, superPassword.value);
+            const { Msg, Status }: any = res;
+            if (!Status) throw new Error(JSON.stringify(res));
+            if (Status !== 10000) {
+                if (Msg) {
+                    throw new Error(Msg);
+                } else {
+                    throw new Error(JSON.stringify(res));
+                }
+            }
+            loading.value = false;
+            Modal.success({
+                title: `注册成功`,
+                class: 'custom-error-dialog',
+                okText: '好的'
+            });
+        } catch(err) {
+            loading.value = false;
+            Modal.error({
+                title: `注册失败: ${err}`,
+                class: 'custom-error-dialog'
+            });
+        }
+    }
 }
-function HandleForget() {
-
+async function HandleForget() {
+    try {
+        const res = await handleFetchFoeget(username.value, password.value, superPassword.value);
+        const { Msg, Status }: any = res;
+        if (!Status) throw new Error(JSON.stringify(res));
+        if (Status !== 10000) {
+            if (Msg) {
+                throw new Error(Msg);
+            } else {
+                throw new Error(JSON.stringify(res));
+            }
+        }
+        loading.value = false;
+        Modal.success({
+            title: `密码已成功修改`,
+            class: 'custom-error-dialog',
+            okText: '好的'
+        });
+    } catch(err) {
+        loading.value = false;
+        Modal.error({
+            title: `${err}`,
+            class: 'custom-error-dialog'
+        });
+    }
 }
 </script>
 
@@ -267,7 +353,7 @@ function HandleForget() {
             right: 0;
             bottom: 0;
             left: 0;
-            background: url('@render/assets/loading1.png') center no-repeat;
+            background: url('@render/assets/loading1.svg') center no-repeat;
             animation: rotate 3s linear infinite;
         }
         .loading2 {
@@ -278,7 +364,7 @@ function HandleForget() {
             right: 0;
             bottom: 0;
             left: 0;
-            background: url("@render/assets/loading2.png") center no-repeat;
+            background: url("@render/assets/loading2.svg") center no-repeat;
         }
     }
 }

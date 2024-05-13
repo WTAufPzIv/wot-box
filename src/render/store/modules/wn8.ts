@@ -23,6 +23,7 @@ const actions: ActionTree<IWn8State, IRootState> = {
     addHistory({ commit, state }, payload) {
         const arr = state.history.filter(item => item !== payload);
         arr.push(payload)
+        if (arr.length > 5) arr.shift();
         commit(Wn8Mutation.SET_HISTRORY, arr);
     },
     clearHistory({ commit }) {

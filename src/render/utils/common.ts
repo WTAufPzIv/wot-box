@@ -1,5 +1,5 @@
-export function formatDate(timestamp: number) {
-    var date = new Date(timestamp);
+export function formatDate(timestamp: number | string) {
+    var date = new Date(Number(timestamp) * 1000);
     return date.toLocaleDateString(); // 这将根据运行代码的浏览器的地区设置来格式化日期
 }
 

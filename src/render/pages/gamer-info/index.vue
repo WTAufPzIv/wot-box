@@ -16,8 +16,15 @@
                 <p class="clear" @click="handleClearHistory">清空历史记录</p>
             </div>
             <div class="list">
-                <p v-for="item in wn8State.history" @click="handleSearch(item)">{{ item }}</p>
+                <p v-for="item in history" @click="handleSearch(item)">{{ item }}</p>
             </div>
+        </div>
+        <BattleReport :report="reportInfo" v-if="reportInfo && !loading" />
+    </div>
+    <div class="loading" v-if="loading">
+        <div class="loading-icon">
+            <div class="loading1"></div>
+            <div class="loading2"></div>
         </div>
     </div>
 </template>
@@ -26,37 +33,30 @@
 <script setup lang="ts">
 import { StoreModule } from '@core/const/store';
 import { fetchLestaData } from '@core/utils/game';
-import { ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { useStore } from 'vuex';
 import { Modal } from 'ant-design-vue';
+import BattleReport from '../../components/BattleReport/index.vue';
 
 const gameUsername = ref('')
 const Store = useStore();
 const wn8State = toRef(Store.state[StoreModule.WN8])
+const history = computed(() => [ ...wn8State.value.history ].reverse())
+const loading = ref(false);
+const reportInfo: any = ref(null);
 
 async function handleSearch(gameUsername: string) {
     if (!gameUsername) return;
+    loading.value = true;
     Store.dispatch(`${StoreModule.WN8}/addHistory`, gameUsername)
     const res = await fetchLestaData(gameUsername);
+    loading.value = false
     if (res.status) {
-        if (!res.payload?.response) {
-            return Modal.error({
-                title: `数据异常：${res.payload}`,
-                class: 'custom-error-dialog',
-                okText: '知道了',
-            });
-        }
-        if (res.payload!.response.length === 0) {
-            return Modal.error({
-                title: `该玩家不存在`,
-                class: 'custom-error-dialog',
-                okText: '知道了',
-            });
-        }
-        console.log(res.payload)
+        reportInfo.value = res.payload;
     } else {
-        return Modal.error({
-            title: `用户id请求失败：${res.message}`,
+        reportInfo.value = null;
+        Modal.error({
+            title: `${res.message}`,
             class: 'custom-error-dialog',
             okText: '知道了',
         });
@@ -69,6 +69,14 @@ function handleClearHistory() {
 </script>
 
 <style scoped lang="less">
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .gamer-info--page {
     width: 1000px;
     .head {
@@ -144,6 +152,51 @@ function handleClearHistory() {
             }
         }
         
+    }
+}
+.loading {
+    position: absolute;
+    overflow: hidden;
+    transform: translate(0);
+    will-change: transform;
+    left: 0;
+    top: 0px;
+    background-color: rgba(0,0,0,0.8);
+    width: calc(100vw - 160px);
+    height: calc(100vh - 60px);
+    z-index: 9999;
+    .loading-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: 9px 0 0;
+        will-change: transform;
+        transform: translate(-50%, -50%);
+        width: 114px;
+        height: 114px;
+        text-align: center;
+        z-index: 9999;
+        .loading1 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('@render/assets/loading1.svg') center no-repeat;
+            animation: rotate 3s linear infinite;
+            z-index: 9999;
+        }
+        .loading2 {
+            position: absolute;
+            transform: translate(0);
+            will-change: transform;
+            top: 6px;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url("@render/assets/loading2.svg") center no-repeat;
+            z-index: 9999;
+        }
     }
 }
 </style>

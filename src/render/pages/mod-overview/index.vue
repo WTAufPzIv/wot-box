@@ -2,12 +2,17 @@
     <div class="mode-overview-page" v-if="gameState.gameInstallations">
         <div class="tab">
             <div
-            :class="['tab-item', selectedTab === item ? 'active' : '']"
-            @click="handleClickTab(item)"
-            v-for="item in tabs"
+                :class="[
+                    'tab-item',
+                    selectedTab === item ? 'active' : '',
+                    item === 'VIP' && !isVip ? 'vip' : '',
+                ]"
+                @click="(item !== 'VIP' || isVip) && handleClickTab(item) || (() => {})"
+                v-for="item in tabs"
             >{{ item }}</div>
         </div>
         <div class="mod-list">
+            <p class="vip-tip" v-if="selectedTab === 'VIP'">注意：VIP插件需要从盒子启动才能生效！！！</p>
             <div
                 class="mod-item"
                 v-for="item in modListData[selectedTab]"
@@ -16,7 +21,7 @@
                 <img
                     v-if="refresh"
                     class="image"
-                    :src="item.headImg"
+                    :src="item.img"
                     alt=""
                 />
                 <div class="info">
@@ -43,13 +48,13 @@
         <div
             class="mod-detail-head-bg"
             :style="{
-                backgroundImage: `url(${currentMod.headImg})`
+                backgroundImage: `url(${currentMod.img})`
             }"
         >
             <div class="mask"></div>
         </div>
         <div class="mod-detail-head">
-            <img class="head-img" :src="currentMod.headImg" alt="">
+            <img class="head-img" :src="currentMod.img" alt="">
             <div>
                 <p class="title">{{ currentMod.name }}</p>
                 <p class="other">更新时间：{{ formatDate(currentMod.updataTime) }}</p>
@@ -84,31 +89,32 @@
 
 
 <script setup lang="ts">
-import { ref, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { formatDate, throttle } from '../../utils/common';
 import { Modal } from 'ant-design-vue';
 import { InfoCircleOutlined } from '@ant-design/icons-vue'
 import { ipcMessageTool } from '@core/utils/game';
 import { useStore } from 'vuex';
 import { StoreModule } from '@core/const/store';
+import { ModType } from '@core/const/game';
 const Store = useStore();
-const modState = toRef(Store.state[StoreModule.MODS])
 const gameState = toRef(Store.state[StoreModule.GAME])
 
-const tabs: any = ref([]);
+const tabs: any = Object.keys(ModType)
 const selectedTab :any = ref('');
 const refresh = ref(true);
-const modListData: any = ref({});
 const open = ref(false);
 const currentMod: any = ref({});
 const progress = ref(0);
 const speed = ref(0);
 const downloading = ref(false);
+const userInfo = computed(() => Store.state[StoreModule.USER].userinfo)
+const modListData: any = computed(() => Store.state[StoreModule.MODS].categorize)
 
-Store.dispatch(`${StoreModule.MODS}/initModData`).then(() => {
-    tabs.value = Object.keys(modState.value.categorize)
-    modListData.value = modState.value.categorize;
-    selectedTab.value = tabs.value[0]
+selectedTab.value = tabs[0]
+
+const isVip = computed(() => {
+    return (userInfo.value?.VipTime * 1000 || 0) > new Date().getTime()
 })
 
 function handleClickTab(key: any) {
@@ -153,8 +159,9 @@ async function handleDownload(mod: any) {
         'download-file',
         'download',
         JSON.stringify({
-            path: `${gameState.value.gameInstallations?.path}\\mods\\${gameState.value.gameInstallations?.gameVersion}\\[大德]${mod.name}-${mod.updataTime}.wotmod`,
+            path: gameState.value.gameInstallations?.path,
             url: mod.download,
+            mod: mod,
         }),
         'download-complete'
     )
@@ -173,6 +180,7 @@ async function handleDownload(mod: any) {
         });
     }
     progress.value = 0;
+    speed.value = 0;
 }
 </script>
 
@@ -212,10 +220,23 @@ async function handleDownload(mod: any) {
     font-weight: bold;
     background: #ffffff1d;
   }
+  .vip {
+    color: #ffffff20;
+    cursor: default;
+  }
+  .vip:hover {
+    color: #ffffff20;
+    background: #ffffff10;
+  }
+}
+.vip-tip {
+    color: #f25322;
+    font-size: 20px;
+    font-weight: bold;
 }
 .mod-list {
     width: 1000px;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 270px);
     margin-top: 20px;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -315,62 +336,12 @@ async function handleDownload(mod: any) {
         .ant-modal-confirm-title {
             color: #fff;;
         }
-        button {
-            padding: 0 20px;
-            box-shadow: 0 2px 0 #661000, inset 0 0 8px rgba(255,210,0,.1), inset 0 1px 0 #fab81b, inset 0 -1px 0 #ef4511;
-            background: linear-gradient(to bottom,#fab81b 0%,#ef4511 100%) no-repeat 0,linear-gradient(to bottom,#fab81b 0%,#ef4511 100%) no-repeat 100%,#f25322 linear-gradient(to bottom,#f60 0%,#a6230e 100%) no-repeat;
-            background-size: 1px 100%,1px 100%,cover;
-            display: -ms-inline-flexbox;
-            display: inline-flex;
-            -ms-flex-align: center;
-            align-items: center;
-            -ms-flex-pack: center;
-            justify-content: center;
-            vertical-align: middle;
-            font-size: 14px;
-            font-weight: 700;
-            line-height: 14px;
-            color: #f9f5e1;
-            text-transform: uppercase;
-            text-shadow: 0 -1px rgba(71,0,0,.3);
-            text-decoration: none;
-            border-radius: 1px;
-            position: relative;
-            box-sizing: border-box;
-            height: 44px;
-            white-space: nowrap;
-            margin-left: 24px;
-            cursor: pointer;
-            transition: color .15s ease-out;
-            span {
-                z-index: 2;
-                font-size: 14px;
-                margin: 0;
-                padding: 0;
-                color: #f9f5e1;
-            }
+        .ant-btn-primary {
+            background: #f25322;
         }
-        button:after {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            content: "";
-            box-shadow: inset 0 0 8px rgba(255,210,0,.1), inset 0 1px 0 #fab81b, inset 0 -1px 0 #ff7e00;
-            background: linear-gradient(to bottom,#fab81b 0%,#ff7e00 100%) no-repeat 0,linear-gradient(to bottom,#fab81b 0%,#ff7e00 100%) no-repeat 100%,#ff7e00 linear-gradient(to bottom,#ff7e00 0%,#c2530a 100%) no-repeat;
-            background-size: 1px 100%,1px 100%,cover;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.15s ease-out;
-            will-change: opacity;
-        }
-        button:hover {
-            color: #f9f5e1;
-            cursor: pointer;
-        }
-        button:hover:after {
-            opacity: 1;
+        .ant-btn-default:hover {
+            color: #f25322;
+            border-color: #f25322;
         }
     }
     .ant-modal-close {
@@ -477,7 +448,6 @@ async function handleDownload(mod: any) {
             right: 160px;
             font-size: 18px;
         }
-}
-    
+    }
 }
 </style>

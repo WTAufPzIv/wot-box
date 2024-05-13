@@ -56,6 +56,10 @@ export async function getInstalledMods(path: string) {
     return await ipcMessageTool('file', 'get-installed-mods', { path }, 'installed-mods')
 }
 
+export async function getInstalledTrans(path: string) {
+    return await ipcMessageTool('file', 'get-installed-trans', { path }, 'installed-trans')
+}
+
 export async function removeFileByFileList(pathList: string[]) {
     return await ipcMessageTool('file', 'delete-file', { pathList }, 'delete-file-res')
 }
@@ -65,13 +69,45 @@ export async function openUrlByBrowser(url: string) {
 }
 
 export async function clearAllMods(path: string, gameVersion: string) {
-    return await ipcMessageTool('file', 'clear-all-mods', { path, gameVersion });
+    return await ipcMessageTool('file', 'clear-all-mods', { path, gameVersion }, 'clear-all-mods-res');
 }
 
 export async function closeLoginAndOpenMain() {
     return await ipcMessageTool('login-window-control', 'login-successful');
 }
 
+export async function closeMainAndOpenLogin() {
+    return await ipcMessageTool('login-window-control', 'login-out');
+}
+
 export async function fetchLestaData(gameUsername: string) {
     return await ipcMessageTool('axios', 'get-gameuser-id', { gameUsername }, 'send-gameuser-id');
+}
+
+export async function deleteAppData() {
+    return await ipcMessageTool('vuex', 'clear-vuex', {}, 'clear-vuex-res');
+}
+
+export async function restartApp() {
+    return await ipcMessageTool('window-control', 'restart');
+}
+
+export async function startCheckGameRun() {
+    return await ipcMessageTool('game-run', 'start-check', { processName: 'lgc.exe' });
+}
+
+export async function stopCheckGameRun() {
+    return await ipcMessageTool('game-run', 'stop-check');
+}
+
+export async function extractVip(mods: any) {
+    return await ipcMessageTool('file', 'extract-vip', { mods }, 'extract-vip-res');
+}
+
+export async function deleteVip(mods: any) {
+    return await ipcMessageTool('file', 'delete-vip', { mods }, 'delete-vip-res');
+}
+
+export async function startGame(path: string) {
+    return await ipcMessageTool('game-run', 'start-game', { path: path + '\\lgc_api.exe' }, 'start-game-res');
 }

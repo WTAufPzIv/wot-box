@@ -1,15 +1,21 @@
 import { StoreModule } from '@src/core/const/store';
-import { ipcMessageTool } from '@core/utils/game';
+import { ipcMessageTool, startCheckGameRun, stopCheckGameRun } from '@core/utils/game';
 import { createStore } from 'vuex';
+
 import Game from './modules/game';
 import Mods from './modules/mods';
 import Wn8 from './modules/wn8';
+import User from './modules/user'
+import { sleep } from '../utils/common';
+
+
 
 const store = createStore({
     modules: {
         [StoreModule.GAME]: Game,
         [StoreModule.MODS]: Mods,
         [StoreModule.WN8]: Wn8,
+        [StoreModule.USER]: User
     },
     plugins: [
         async (store) => {
@@ -21,12 +27,54 @@ const store = createStore({
                 const localState = JSON.parse(localStore.payload);
                 store.dispatch(`${StoreModule.GAME}/initGameState`, localState[StoreModule.GAME]);
                 localState[StoreModule.WN8] && store.dispatch(`${StoreModule.WN8}/initHistory`, localState[StoreModule.WN8]);
+                localState[StoreModule.USER] && store.dispatch(`${StoreModule.USER}/initUserData`, localState[StoreModule.USER]);
             }
 
              // 当状态变化时，发送状态到主进程进行存储
             store.subscribe((mutation, state) => {
                 ipcMessageTool('vuex', 'vuex-write', { state: JSON.stringify(state) })
             });
+            await store.dispatch(`${StoreModule.MODS}/initInstalled`);
+            store.dispatch(`${StoreModule.MODS}/initModData`).then(() => {
+                store.dispatch(`${StoreModule.MODS}/initInstalled`);
+                store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
+            });
+
+            // 清除可能残余的vip插件
+            const gamePath = store.state[`${StoreModule.GAME}`].gameInstallations?.path
+            console.log(gamePath)
+            gamePath && ipcMessageTool('file', 'force-delete-vip', { path: gamePath });
+            // 开始监听lgc_api.exe的运行情况
+            if (!location.href.includes('login')) {
+                (window as any).electron.ipcRenderer.on('game_run_status', (data: any) => {
+                    if (data === 'running') {
+                        // if (store.state[`${StoreModule.MODS}`].vipExtracting) return;
+                        // // 查找已经安装，但没有解压到mods中的vip插件
+                        const installedList = store.state[`${StoreModule.MODS}`].installed;
+                        const installedVipList = Object.keys(store.state[`${StoreModule.MODS}`].installedVip);
+                        // 解析差异
+                        const needExtract = installedList.filter((element: any) => {
+                            return (!installedVipList.includes(element.name)) && element.categorize === 'VIP'
+                        });
+                        // 存在没解压的插件
+                        if (needExtract.length > 0) {
+                            store.dispatch(`${StoreModule.MODS}/extractVip`, needExtract);
+                        }
+                    } else if (data === 'stopped') {
+                        // if (store.state[`${StoreModule.MODS}`].vipExtracting) return;
+                        const installedVipList = Object.keys(store.state[`${StoreModule.MODS}`].installedVip);
+                        if (installedVipList.length > 0) {
+                            store.dispatch(`${StoreModule.MODS}/deleteVip`);
+                        }
+                    }
+                });
+                (window as any).electron.ipcRenderer.on('app-quit', (data: any) => {
+                    store.dispatch(`${StoreModule.MODS}/deleteVip`);
+                    stopCheckGameRun();
+                });
+                await sleep(50);
+                startCheckGameRun();
+            }
         }
       ]
 });

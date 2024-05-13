@@ -10,6 +10,9 @@
                 <slot></slot>
             </div>
         </div>
+        <div class="bottom-bar">
+            <StartGame class="start"></StartGame>
+        </div>
         <div class="loading" v-show="gameState.gameLoading">
             <div class="loading-icon">
                 <div class="loading1"></div>
@@ -28,6 +31,7 @@
 <script setup lang="ts">
 import HeaderBar from '../HeaderBar/index.vue';
 import ASide from '../Aside/index.vue';
+import StartGame from '../StartGame/index.vue';
 import { useStore } from 'vuex';
 import { StoreModule } from '@core/const/store';
 import { useRoute } from 'vue-router';
@@ -58,9 +62,23 @@ const gameState = Store.state[StoreModule.GAME]
     display: flex;
     flex-direction: row;
 }
+.bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: rgb(24,24,24);
+    .start {
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translate( 0, -50%);
+    }
+}
 .main-container {
     flex-grow: 1;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 160px);
     background-color: rgb(28,28,30);
     display: flex;
     flex-direction: row;
@@ -68,6 +86,7 @@ const gameState = Store.state[StoreModule.GAME]
     padding: 12px;
     overflow-x: hidden;
     overflow-y: scroll;
+    position: relative;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -103,7 +122,7 @@ const gameState = Store.state[StoreModule.GAME]
             right: 0;
             bottom: 0;
             left: 0;
-            background: url('@src/assets/loading1.png') center no-repeat;
+            background: url('@src/assets/loading1.svg') center no-repeat;
             animation: rotate 3s linear infinite;
             z-index: 9999;
         }
@@ -115,7 +134,7 @@ const gameState = Store.state[StoreModule.GAME]
             right: 0;
             bottom: 0;
             left: 0;
-            background: url("@src/assets/loading2.png") center no-repeat;
+            background: url("@src/assets/loading2.svg") center no-repeat;
             z-index: 9999;
         }
     }

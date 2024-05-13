@@ -116,7 +116,7 @@ function gotoVideo(url: string) {
     }
     .news {
       margin-top: 10px;
-      height: calc(100vh - 170px);
+      height: calc(100vh - 270px);
       // background-color: red;
       overflow-x: hidden;
       overflow-y: scroll;

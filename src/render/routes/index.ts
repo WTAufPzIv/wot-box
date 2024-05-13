@@ -9,6 +9,7 @@ import modOverviewComponent from '../pages/mod-overview/index.vue';
 import gamerInfoComponents from '../pages/gamer-info/index.vue'
 import adminComponents from '../pages/admin/index.vue'
 import sponsorComponents from '../pages/sponsor/index.vue'
+import userAccount from '../pages/account/index.vue'
 
 // vite直接使用动态path无法解析，https://github.com/vitejs/vite/discussions/2746
 // const dashboardModules =
@@ -65,9 +66,18 @@ const router: IRouter = createRouter({
             component: gameTransComponent,
         },
         {
+            name: 'icon.user-account',
+            path: '/user-account',
+            meta: {
+                title: '我的账号',
+            },
+            component: userAccount,
+        },
+        {
             name: 'icon.gamer-info',
             path: '/gamer-info',
             meta: {
+                keepAlive: true,
                 title: '战绩查询',
             },
             component: gamerInfoComponents,
