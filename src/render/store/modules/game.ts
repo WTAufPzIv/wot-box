@@ -1,4 +1,4 @@
-import { GameMutation } from '@src/core/const/store';
+import { GameMutation, StoreModule } from '@src/core/const/store';
 import { addGamePathByDialog, isWotFolder, parseGameInstallation, showErrorByDialog } from '@core/utils/game';
 import { Module, MutationTree, ActionTree } from 'vuex';
 import { IRootState } from '../type';
@@ -11,20 +11,15 @@ export interface IgameInstallations {
 
 export interface IGameState {
     gameInstallations: IgameInstallations | null,
-    gameLoading: boolean;
 }
 
 export const state: IGameState = {
     gameInstallations: null,
-    gameLoading: false,
 };
 
 export const mutations: MutationTree<IGameState> = {
     [GameMutation.SET_GAME_INSTALLATIONS](state: IGameState, payload: any) {
         state.gameInstallations = payload;
-    },
-    [GameMutation.SET_GAME_LOADING](state: IGameState, payload: any) {
-        state.gameLoading = payload;
     },
 };
 
@@ -35,10 +30,7 @@ const actions: ActionTree<IGameState, IRootState> = {
             dispatch('checkAllGameInstallation');
         }
     },
-    setGameLoading({ commit }, payload) {
-        commit(GameMutation.SET_GAME_LOADING, payload)
-    },
-    async addGameInstallation({ commit }) {
+    async addGameInstallation({ commit, dispatch }) {
         const res = await addGamePathByDialog();
         const { status, payload, message } = res;
         if (status && payload) {
@@ -48,7 +40,9 @@ const actions: ActionTree<IGameState, IRootState> = {
                     path,
                     gameVersion,
                     gameName
-                })
+                });
+                dispatch(`${StoreModule.MODS}/initInstalledTrans`, null, { root: true });
+                dispatch(`${StoreModule.MODS}/initInstalled`, null, { root: true });
             } catch(e) {
                 console.log(e)
                 showErrorByDialog("失败", "解析错误，请确保所选择的文件夹是坦克世界游戏根目录，且保证游戏完成性");

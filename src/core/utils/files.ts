@@ -6,7 +6,7 @@ const path = require('path')
 const { exec } = require('child_process');
 
 // 读取并解析XML文件的函数
-export function readAndParseXML(filePath: string, Binary: boolean = false) {
+export function readAndParseXML(filePath: string) {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, (err: any, data: any) => {
             if (err) {

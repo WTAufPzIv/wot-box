@@ -4,15 +4,20 @@ import { IRootState } from '../type';
 
 export interface IWn8State {
     history: string[],
+    admin: boolean,
 }
 
 const state: IWn8State = {
     history: [],
+    admin: false,
 };
 
 const mutations: MutationTree<IWn8State> = {
     [Wn8Mutation.SET_HISTRORY](state: IWn8State, payload: any) {
         state.history = payload;
+    },
+    [Wn8Mutation.SET_ADMIN](state: IWn8State, payload: any) {
+        state.admin = payload;
     }
 };
 
@@ -29,6 +34,9 @@ const actions: ActionTree<IWn8State, IRootState> = {
     clearHistory({ commit }) {
         commit(Wn8Mutation.SET_HISTRORY, []);
     },
+    setAdmin({ commit }, payload) {
+        commit(Wn8Mutation.SET_ADMIN, payload)
+    }
 }
 
 const Wn8Module: Module<IWn8State, IRootState> = {

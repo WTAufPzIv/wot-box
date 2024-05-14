@@ -5,7 +5,9 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
+    "dev:dist": "electron ./dist-electron/main.js",
     "build": "vue-tsc && vite build",
+    "build:electron": "electron-builder",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,7 +20,6 @@
     "binary-xml": "0.0.1",
     "crypto-js": "^4.2.0",
     "edge": "7.10.1",
-    "electron": "29.1.6",
     "extract-zip": "^2.0.1",
     "fs-extra": "^11.2.0",
     "html-to-image": "1.11.11",
@@ -40,9 +41,11 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
+    "electron": "29.1.6",
     "@types/adm-zip": "0.5.5",
     "@types/xml2js": "0.4.14",
     "@vitejs/plugin-vue": "5.0.4",
+    "electron-builder": "^24.13.3",
     "electron-devtools-installer": "3.2.0",
     "less": "4.2.0",
     "typescript": "5.2.2",

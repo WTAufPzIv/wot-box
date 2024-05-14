@@ -5,8 +5,6 @@ import electronRenderer from "vite-plugin-electron-renderer"
 import polyfillExports from "vite-plugin-electron-renderer" 
 import path from 'path'
 
-const resolvePath = (str: string) => path.resolve(__dirname, str);
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -14,7 +12,12 @@ export default defineConfig({
     electron([
       {
         entry: "src/electron/main.ts", // 主进程文件
+        vite: { build: { outDir: "dist-electron" } },
       },
+      {
+        entry: "src/electron/preload.js",
+        vite: { build: { outDir: "dist-electron" } },
+      }
     ]),
     electronRenderer(),
     polyfillExports(),

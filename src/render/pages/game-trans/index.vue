@@ -101,7 +101,7 @@ const progress = ref(0);
 const speed = ref(0);
 const downloading = ref(false);
 
-Store.dispatch(`${StoreModule.MODS}/initModData`);
+Store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
 const installedTrans = computed(() => Store.state[StoreModule.MODS].installedTrans)
 
 async function handleDownload(mod: any) {

@@ -30,6 +30,7 @@
       <div class = "other-btn">
         <div class="btn" @click="handleCheckVersion()">检查更新</div>
         <div class="btn" @click="handleClearAppData()">清除应用数据</div>
+        <div class="btn" @click="handleOpenAppData()" v-if="isAdmin">打开AppData文件夹</div>
       </div>
     </div>
   </div>
@@ -38,7 +39,7 @@
 <script setup lang="ts">
 import { StoreModule } from '@core/const/store';
 import { deleteAppData, ipcMessageTool, restartApp } from '@core/utils/game';
-import { toRef, h } from 'vue';
+import { toRef, h, computed } from 'vue';
 import { useStore } from 'vuex';
 import { Modal } from 'ant-design-vue';
 import {
@@ -48,6 +49,7 @@ import { sleep } from '@src/render/utils/common';
 
 const Store = useStore();
 const gameState = toRef(Store.state[StoreModule.GAME])
+const isAdmin = computed(() => Store.state[StoreModule.WN8].admin);
 
 function handleClick() {
   Store.dispatch(`${StoreModule.GAME}/addGameInstallation`);
@@ -59,6 +61,9 @@ function handleOpenFolder(path: string) {
 
 function handleCheckVersion() {
 
+}
+function handleOpenAppData() {
+  ipcMessageTool('file', 'open-add-data');
 }
 function handleClearAppData() {
   Modal.confirm({

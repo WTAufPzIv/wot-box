@@ -8,7 +8,7 @@ let loginWin: BrowserWindow | null;
 let tray: Tray | null = null;
 
 function createTray() {
-    tray = new Tray(path.join(__dirname, '../public/1.jpg'));
+    tray = new Tray(process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../public/1.jpg') : path.join(__dirname, '../dist/1.jpg'));
     const contextMenu = Menu.buildFromTemplate([
         { label: '退出', type: 'normal', click: async () => {
             win?.webContents.send('app-quit');
@@ -25,6 +25,7 @@ function createTray() {
 }
 
 const createLoginWindow = () => {
+    console.log(app.getPath('userData'));
     loginWin = new BrowserWindow({
         autoHideMenuBar: true,
         frame: false,
@@ -34,15 +35,17 @@ const createLoginWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
-            preload: path.join(__dirname, '../src/render/electron-preload.js'), //预加载
+            preload: path.join(__dirname, 'preload.js'), //预加载
         },
     })
-    process.env.VITE_DEV_SERVER_URL && loginWin.loadURL('http://localhost:3000/#/login') || loginWin.loadFile('dist/index.html')
+    process.env.VITE_DEV_SERVER_URL && loginWin.loadURL('http://localhost:3000/#/login') || loginWin.loadURL('file://' + path.join(__dirname, '../dist/index.html') + '#/login');
     loginWin.on('closed', () => {
         loginWin = null;
     });
     ipc(loginWin);
     ipcMain.on('login-window-control', async (event, command) => {
+        // 用一下这个参数
+        JSON.stringify(event)
         switch (command) {
             case 'login-successful':
                 if (loginWin) {
@@ -73,18 +76,19 @@ const createWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
-            preload: path.join(__dirname, '../src/render/electron-preload.js'), //预加载
+            preload: path.join(__dirname, 'preload.js'), //预加载
         },
     })
-    process.env.VITE_DEV_SERVER_URL && win.loadURL('http://localhost:3000') || win.loadFile('dist/index.html')
+    process.env.VITE_DEV_SERVER_URL && win.loadURL('http://localhost:3000') || win.loadURL('file://' + path.join(__dirname, '../dist/index.html'));
     ipc(win);
     ipcMain.on('login-window-control', async (event, command) => {
+        // 用一下这个参数
+        JSON.stringify(event)
         switch (command) {
             case 'login-out':
                 if (win) {
                     win.removeAllListeners();
                     ipcMain.removeAllListeners();
-                    // await sleep(100)
                     tray && tray.destroy();
                     win.close();
                 }

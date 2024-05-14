@@ -1,6 +1,5 @@
 export enum GameMutation {
     SET_GAME_INSTALLATIONS = 'setGameInstallations',
-    SET_GAME_LOADING = 'setGameLoading',
 }
 
 export enum ModMutation {
@@ -15,6 +14,7 @@ export enum ModMutation {
 
 export enum Wn8Mutation {
     SET_HISTRORY = 'sethistory',
+    SET_ADMIN = 'setAdmin'
 }
 
 export enum UserMutation {

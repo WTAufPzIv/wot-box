@@ -23,7 +23,7 @@ export async function addGamePathByDialog(): Promise<IipcMessage> {
 }
 
 export async function showErrorByDialog(title: string, message: string) {
-    return await alert(message)
+    return await alert(title + message)
 }
 
 export async function isWotFolder(path: string): Promise<boolean> {

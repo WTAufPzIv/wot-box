@@ -10,7 +10,6 @@ const fsExt = require('fs-extra');
 const { rimrafSync } = require('rimraf')
 const { spawn } = require('child_process');
 const tempZipPath = `${app.getPath('temp')}/downloaded.zip`;
-const { exec } = require('child_process');
 let interval: any = null;
 
 // 程序app data相关路径
@@ -132,6 +131,12 @@ export default (mainWindow: BrowserWindow) => {
         try {
           const { path: wotpath } = args;
           await shell.openPath(wotpath);
+        } catch {
+        }
+        break;
+      case 'open-add-data':
+        try {
+          await shell.openPath(app.getPath('userData'));
         } catch {
         }
         break;
@@ -271,7 +276,7 @@ export default (mainWindow: BrowserWindow) => {
             if (zipFile) {
               const zipPath = path.join(targetFolder, zipFile);
               await unzipFile(zipPath, targetFolder, item.password);
-              const hideCmd = `attrib +h +s ${targetFolder} /S /D`;
+              // const hideCmd = `attrib +h +s ${targetFolder} /S /D`;
               // exec(hideCmd, (error: any, stdout: any, stderr: any) => {
               //     if (error) {
               //       event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(error)));
@@ -474,6 +479,8 @@ export default (mainWindow: BrowserWindow) => {
   });
   // shell执行监听
   ipcMain.on('shell', async (event, command, args) => {
+    // 用一下这个参数
+    JSON.stringify(event)
     switch (command) {
       case 'open-url-by-browser':
         const { url } = args;

@@ -32,9 +32,12 @@ const store = createStore({
 
              // 当状态变化时，发送状态到主进程进行存储
             store.subscribe((mutation, state) => {
+                // 用一下这个参数
+                JSON.stringify(mutation)
                 ipcMessageTool('vuex', 'vuex-write', { state: JSON.stringify(state) })
             });
             await store.dispatch(`${StoreModule.MODS}/initInstalled`);
+            await store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
             store.dispatch(`${StoreModule.MODS}/initModData`).then(() => {
                 store.dispatch(`${StoreModule.MODS}/initInstalled`);
                 store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
@@ -66,7 +69,7 @@ const store = createStore({
                         }
                     }
                 });
-                (window as any).electron.ipcRenderer.on('app-quit', async (data: any) => {
+                (window as any).electron.ipcRenderer.on('app-quit', async () => {
                     store.dispatch(`${StoreModule.MODS}/deleteVip`);
                     await stopCheckGameRun();
                 });

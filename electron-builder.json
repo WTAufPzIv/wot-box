@@ -1,0 +1,11 @@
+{
+    "files": ["dist/**/*", "dist-electron/**/*"],
+    "directories": {
+        "output": "release"
+    },
+    "appId": "com.example.app",
+    "productName": "坦克世界大德盒子",
+    "win": {
+        "icon": "icons/icon.ico"
+    }
+}
