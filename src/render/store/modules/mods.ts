@@ -12,7 +12,6 @@ export interface IModState {
     installedCategorize: any,
     installedName: any,
     installedTrans: any,
-    vipExtracting: boolean,
     installedVip: any,
 }
 
@@ -23,7 +22,6 @@ const state: IModState = {
     installedCategorize: {},
     installedName: {},
     installedTrans: {},
-    vipExtracting: false,
     installedVip: {},
 };
 
@@ -45,9 +43,6 @@ const mutations: MutationTree<IModState> = {
     },
     [ModMutation.SET_INSTALLED_TRANS](state: IModState, payload: any) {
         state.installedTrans = payload;
-    },
-    [ModMutation.SET_VIP_EXTRACTING](state: IModState, payload: any) {
-        state.vipExtracting = payload;
     },
     [ModMutation.SET_INSTALLED_VIP](state: IModState, payload: any) {
         state.installedVip = payload;
@@ -111,10 +106,9 @@ const actions: ActionTree<IModState, IRootState> = {
     async setInstalledVip({ commit }, payload) {
         commit(ModMutation.SET_INSTALLED_VIP, payload)
     },
-    async extractVip({ commit, state }, needExtractMods) {
-        commit(ModMutation.SET_VIP_EXTRACTING, true);
+    async extractVip({ commit, state, rootState }, needExtractMods) {
         if (needExtractMods.length > 0) {
-            const res = await extractVip(JSON.stringify(needExtractMods));
+            const res = await extractVip(JSON.stringify(needExtractMods), rootState[`${StoreModule.GAME}`].gameInstallations.path);
             if (res.status) {
                 const temp = JSON.parse(JSON.stringify(state.installedVip));
                 needExtractMods.forEach((item: any) => {
@@ -125,17 +119,14 @@ const actions: ActionTree<IModState, IRootState> = {
                 alert(`vip插件注入错误`+res.message)
             }
         }
-        commit(ModMutation.SET_VIP_EXTRACTING, false);
     },
     async deleteVip({ commit, state }) {
-        commit(ModMutation.SET_VIP_EXTRACTING, true);
         const res = await deleteVip(JSON.stringify(Object.values(state.installedVip)));
         if (res.status) {
             commit(ModMutation.SET_INSTALLED_VIP, {})
         } else {
             alert(`vip插件注入错误(1)`+res.message)
         }
-        commit(ModMutation.SET_VIP_EXTRACTING, false);
     },
 }
 

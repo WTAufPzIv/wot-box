@@ -84,7 +84,7 @@ const createWindow = () => {
                 if (win) {
                     win.removeAllListeners();
                     ipcMain.removeAllListeners();
-                    await sleep(100)
+                    // await sleep(100)
                     tray && tray.destroy();
                     win.close();
                 }

@@ -25,9 +25,9 @@ const store = createStore({
             if (localStore.status) {
                 // 读取成功才进行state载入
                 const localState = JSON.parse(localStore.payload);
-                store.dispatch(`${StoreModule.GAME}/initGameState`, localState[StoreModule.GAME]);
-                localState[StoreModule.WN8] && store.dispatch(`${StoreModule.WN8}/initHistory`, localState[StoreModule.WN8]);
-                localState[StoreModule.USER] && store.dispatch(`${StoreModule.USER}/initUserData`, localState[StoreModule.USER]);
+                await store.dispatch(`${StoreModule.GAME}/initGameState`, localState[StoreModule.GAME]);
+                localState[StoreModule.WN8] && await store.dispatch(`${StoreModule.WN8}/initHistory`, localState[StoreModule.WN8]);
+                localState[StoreModule.USER] && await store.dispatch(`${StoreModule.USER}/initUserData`, localState[StoreModule.USER]);
             }
 
              // 当状态变化时，发送状态到主进程进行存储
@@ -42,13 +42,12 @@ const store = createStore({
 
             // 清除可能残余的vip插件
             const gamePath = store.state[`${StoreModule.GAME}`].gameInstallations?.path
-            console.log(gamePath)
             gamePath && ipcMessageTool('file', 'force-delete-vip', { path: gamePath });
             // 开始监听lgc_api.exe的运行情况
             if (!location.href.includes('login')) {
-                (window as any).electron.ipcRenderer.on('game_run_status', (data: any) => {
-                    if (data === 'running') {
-                        // if (store.state[`${StoreModule.MODS}`].vipExtracting) return;
+                (window as any).electron.ipcRenderer.on('game_run_status', async (data: any) => {
+                    const isVip = (store.state[`${StoreModule.USER}`].userinfo.VipTime * 1000 || 0) > new Date().getTime();
+                    if (data === 'running' && isVip) {
                         // // 查找已经安装，但没有解压到mods中的vip插件
                         const installedList = store.state[`${StoreModule.MODS}`].installed;
                         const installedVipList = Object.keys(store.state[`${StoreModule.MODS}`].installedVip);
@@ -61,16 +60,15 @@ const store = createStore({
                             store.dispatch(`${StoreModule.MODS}/extractVip`, needExtract);
                         }
                     } else if (data === 'stopped') {
-                        // if (store.state[`${StoreModule.MODS}`].vipExtracting) return;
                         const installedVipList = Object.keys(store.state[`${StoreModule.MODS}`].installedVip);
                         if (installedVipList.length > 0) {
                             store.dispatch(`${StoreModule.MODS}/deleteVip`);
                         }
                     }
                 });
-                (window as any).electron.ipcRenderer.on('app-quit', (data: any) => {
+                (window as any).electron.ipcRenderer.on('app-quit', async (data: any) => {
                     store.dispatch(`${StoreModule.MODS}/deleteVip`);
-                    stopCheckGameRun();
+                    await stopCheckGameRun();
                 });
                 await sleep(50);
                 startCheckGameRun();

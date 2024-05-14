@@ -97,11 +97,11 @@ export async function startCheckGameRun() {
 }
 
 export async function stopCheckGameRun() {
-    return await ipcMessageTool('game-run', 'stop-check');
+    return await ipcMessageTool('game-run', 'stop-check', 'stop-check-res');
 }
 
-export async function extractVip(mods: any) {
-    return await ipcMessageTool('file', 'extract-vip', { mods }, 'extract-vip-res');
+export async function extractVip(mods: any, gamePath: string) {
+    return await ipcMessageTool('file', 'extract-vip', { mods, path: gamePath }, 'extract-vip-res');
 }
 
 export async function deleteVip(mods: any) {

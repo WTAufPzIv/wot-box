@@ -33,39 +33,6 @@ export const modList = [
         target: 'mods'
     },
     {
-        name: '蓝色多功能瞄具',
-        updataTime: 1715243329,
-        gameVersion: '1.26.0.0',
-        img: 'https://img2.imgtp.com/2024/05/12/1X2y7ros.png',
-        detailMd: '',
-        size: '673.4 K',
-        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iBdJm1ylhfkj&type=down',
-        categorize: '瞄准',
-        target: 'mods'
-    },
-    {
-        name: '蓝色多功能瞄具',
-        updataTime: 1715243329,
-        gameVersion: '1.26.0.0',
-        img: 'https://img2.imgtp.com/2024/05/12/1X2y7ros.png',
-        detailMd: '',
-        size: '673.4 K',
-        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iBdJm1ylhfkj&type=down',
-        categorize: '瞄准',
-        target: 'mods'
-    },
-    {
-        name: '蓝色多功能瞄具',
-        updataTime: 1715243329,
-        gameVersion: '1.26.0.0',
-        img: 'https://img2.imgtp.com/2024/05/12/1X2y7ros.png',
-        detailMd: '',
-        size: '673.4 K',
-        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iBdJm1ylhfkj&type=down',
-        categorize: '瞄准',
-        target: 'mods'
-    },
-    {
         name: '战锤十字准线',
         updataTime: 1715243329,
         gameVersion: '1.26.0.0',
@@ -77,13 +44,46 @@ export const modList = [
         target: 'mods'
     },
     {
+        name: '白色比赛瞄具',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/SoRBMhHt.png',
+        detailMd: '',
+        size: '567.8 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/izTxq1yo71sb&type=down',
+        categorize: '瞄准',
+        target: 'mods'
+    },
+    {
+        name: '白色瞄具',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/ARmVL5Iw.png',
+        detailMd: '',
+        size: '545.1 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/izTxq1yo71sb&type=down',
+        categorize: '瞄准',
+        target: 'mods'
+    },
+    {
         name: '[日语]非常吵的雪风大人语音包nanoda',
         updataTime: 1715251489000,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/09/WesHiCbc.png',
         detailMd: '**用了可能出现以下症状nanoda：我没疯nanoda！**\n\n\n\n[视频预览](https://www.bilibili.com/video/BV1qa411n7e5)\n\n\n\n更新日志：\n\n\n\n- 2023.10.12：应网友要求加了几条语音。\n\n- 2023.3.14：更新文件，屏蔽了特殊车长语音。\n\n- 2022.7.12更新：修复了起火的音效过大的问题\n\n\n\n特别提示：由于本语音修改了声音设置，和一些炮声插件等不兼容。',
-        size: '13MB',
-        download: '',
+        size: '5.6 M',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/i3ruT1yo412h&type=down',
+        categorize: '语音',
+        target: 'mods'
+    },
+    {
+        name: '【国语】芝芝葡桃语音包',
+        updataTime: 1715251489000,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/U6IMrOwd.png',
+        detailMd: '',
+        size: '3.0 M',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/ihhyW1yo3q3c&type=down',
         categorize: '语音',
         target: 'mods'
     },
@@ -93,8 +93,8 @@ export const modList = [
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/09/WV6dWBwc.png',
         detailMd: '',
-        size: '13MB',
-        download: '',
+        size: '21.7 M',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/i03v21yo4egj&type=down',
         categorize: '炮声',
         target: 'mods'
     },
@@ -121,13 +121,35 @@ export const modList = [
         target: 'mods'
     },
     {
+        name: 'AW圆形伤害面板',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/KuGmERqC.png',
+        detailMd: '',
+        size: '599.1 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iS9g51yo6iti&type=down',
+        categorize: '面板',
+        target: 'mods'
+    },
+    {
+        name: '怀旧版地图加载屏幕',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/giS84pHR.png',
+        detailMd: '',
+        size: '50.96 M',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iRfco1yo8n9a&type=down',
+        categorize: '美化',
+        target: 'mods'
+    },
+    {
         name: '细长血条+飘血',
         updataTime: 1715243329,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/09/MLmQlyCh.png',
         detailMd: '',
-        size: '13MB',
-        download: '',
+        size: '269.4 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iugl01yo4l9e&type=down',
         categorize: '美化',
         target: 'mods'
     },
@@ -137,7 +159,7 @@ export const modList = [
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/09/N04Z3O1C.png',
         detailMd: '',
-        size: '13MB',
+        size: '12.5 M',
         download: '',
         categorize: '车库',
         target: 'mods'
@@ -154,13 +176,90 @@ export const modList = [
         target: 'mods'
     },
     {
+        name: '车库国旗更明显',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/OgIX5Tak.png',
+        detailMd: '',
+        size: '7.0 M',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/ixncL1yo7yta&type=down',
+        categorize: '车库',
+        target: 'mods'
+    },
+    {
+        name: '车库时间',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/gtIxIpCV.png',
+        detailMd: '',
+        size: '510.5 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iu7iA1yo8pfi&type=down',
+        categorize: '车库',
+        target: 'mods'
+    },
+    {
         name: '距离标记汉化版',
         updataTime: 1715243329,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/09/GB5WAeDH.png',
         detailMd: '',
-        size: '13MB',
-        download: '',
+        size: '152.4 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/i7wEW1yo357a&type=down',
+        categorize: '功能',
+        target: 'mods'
+    },
+    {
+        name: '彩色弹孔（绿色击穿黑底版）',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/yrZhIppM.png',
+        detailMd: '',
+        size: '23.9 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/i5WeA1yo9igd&type=down',
+        categorize: '功能',
+        target: 'mods'
+    },
+    {
+        name: 'CHAMPI版打环插件',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/Ij2bB6oh.png',
+        detailMd: '',
+        size: '725.1 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iuKwM1yo7d8d&type=down',
+        categorize: '功能',
+        target: 'mods'
+    },
+    {
+        name: '战斗中显示当前配件',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/AYKI8UG7.png',
+        detailMd: '',
+        size: '158.5 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iBHGp1yo4skh&type=down',
+        categorize: '功能',
+        target: 'mods'
+    },
+    {
+        name: 'C键装填提示',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/5wgagW7N.png',
+        detailMd: 'C键状态时间提示\n\n> 汉化后会显示中文，不用担心，**老外看到的是俄文**。',
+        size: '133.3 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/i7Fj71yo7kbi&type=down',
+        categorize: '功能',
+        target: 'mods'
+    },
+    {
+        name: '15米草后安全圈',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/acltI2pl.png',
+        detailMd: '',
+        size: '182.4 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/ilI0T1yo5wgd&type=down',
         categorize: '功能',
         target: 'mods'
     },
@@ -171,7 +270,18 @@ export const modList = [
         img: 'https://img2.imgtp.com/2024/05/09/XSL3dxur.png',
         detailMd: '',
         size: '13MB',
-        download: '',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/ivHbD1yo51pg&type=down',
+        categorize: '涂装',
+        target: 'mods'
+    },
+    {
+        name: '3D皮肤自由选择',
+        updataTime: 1715243329,
+        gameVersion: '1.26.0.0',
+        img: 'https://img2.imgtp.com/2024/05/14/5xzYQ10O.png',
+        detailMd: '3D涂装选择器，进入车库后右下角菜单，选择3D涂装使用。\n\n只有车库中你有这种车才有效，车辆点下即可，可取消所有涂装，也可点黄色按钮应用全部涂装。也可以在左边坦克按钮按类型筛选查找车辆涂装。',
+        size: '257.2 K',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/idVdl1yo5bpg&type=down',
         categorize: '涂装',
         target: 'mods'
     },
@@ -188,15 +298,15 @@ export const modList = [
         password: 'cxxh19981014',
     },
     {
-        name: '金币车金色图标显示',
+        name: '战斗统计',
         updataTime: 1715243329,
         gameVersion: '1.26.0.0',
-        img: 'https://img2.imgtp.com/2024/05/13/5GZ4NCSf.png',
+        img: 'https://img2.imgtp.com/2024/05/14/qaqo7gHg.png',
         detailMd: '',
-        size: '12.49 M',
-        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iE3eg1ymvush&type=down',
+        size: '1.7 M',
+        download: 'https://www.yuanxiapi.cn/api/lanzou/?url=https://wwo.lanzouq.com/iXGHL1yo2eub&type=down',
         categorize: 'VIP',
         target: 'vip',
-        password: 'cxxh19981014',
-    }
+        password: 'fsdfsff12313',
+    },
 ]

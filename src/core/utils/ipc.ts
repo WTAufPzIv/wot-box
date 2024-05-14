@@ -10,6 +10,7 @@ const fsExt = require('fs-extra');
 const { rimrafSync } = require('rimraf')
 const { spawn } = require('child_process');
 const tempZipPath = `${app.getPath('temp')}/downloaded.zip`;
+const { exec } = require('child_process');
 let interval: any = null;
 
 // 程序app data相关路径
@@ -254,7 +255,14 @@ export default (mainWindow: BrowserWindow) => {
         break;
       case 'extract-vip':
         try {
-          const { mods } = args;
+          const { mods, path: gamePath } = args;
+          // 先把和版本号同级的一些文件拷贝过去（真特么烦）
+          const extModConfig = fs.readdirSync(path.join(gamePath, 'dadevip')).filter((folder: any) => !folder.startsWith('1.'));
+          for (const item of extModConfig) {
+            const itemPath = path.join(gamePath, 'dadevip', item);
+            await fsExt.copy(itemPath, itemPath.replace('dadevip', 'mods'), { overwrite: true });
+          }
+          // 然后再解压
           JSON.parse(mods).forEach(async(item: any) => {
             const targetFolder = item.path.replace('dadevip', 'mods')
             await fsExt.copy(item.path, targetFolder, { overwrite: true });
@@ -263,6 +271,18 @@ export default (mainWindow: BrowserWindow) => {
             if (zipFile) {
               const zipPath = path.join(targetFolder, zipFile);
               await unzipFile(zipPath, targetFolder, item.password);
+              const hideCmd = `attrib +h +s ${targetFolder} /S /D`;
+              // exec(hideCmd, (error: any, stdout: any, stderr: any) => {
+              //     if (error) {
+              //       event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(error)));
+              //     }
+              //     if (stderr) {
+              //       event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(stderr)));
+              //     }
+              //     else {
+              //       event.sender.send('extract-vip-res', createSuccessIpcMessage(JSON.stringify(stdout)));
+              //     }
+              // });
             }
           });
           event.sender.send('extract-vip-res', createSuccessIpcMessage(1));
@@ -546,6 +566,7 @@ export default (mainWindow: BrowserWindow) => {
         break;
       case 'stop-check':
         interval && clearInterval(interval);
+        event.sender.send('stop-check-res', createSuccessIpcMessage(1));
         break;
       case 'start-game':
         try {

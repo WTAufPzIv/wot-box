@@ -10,7 +10,6 @@ export enum ModMutation {
     SET_INSTALLED_TRANS = 'setInstalledTrans',
     SET_INSTALLED_CATEGORIZE = 'setInstalledCategorize',
     SET_INSTALLED_NAME = 'setInstalledName',
-    SET_VIP_EXTRACTING = 'setVipExtracting',
     SET_INSTALLED_VIP = 'setInstalledVip',
 }
 

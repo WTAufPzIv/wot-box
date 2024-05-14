@@ -18,12 +18,13 @@
                 v-for="item in modListData[selectedTab]"
                 v-show="item.gameVersion === gameState.gameInstallations?.gameVersion"
             >
-                <img
+                <div
                     v-if="refresh"
                     class="image"
-                    :src="item.img"
-                    alt=""
-                />
+                    :style="{
+                        backgroundImage: `url(${item.img})`
+                    }"
+                ></div>
                 <div class="info">
                     <p class="name" @click="gotoDetail(item)">{{ item.name }}</p>
                     <p class="time">更新时间：{{ formatDate(item.updataTime) }}</p>
@@ -54,7 +55,12 @@
             <div class="mask"></div>
         </div>
         <div class="mod-detail-head">
-            <img class="head-img" :src="currentMod.img" alt="">
+            <div
+                class="head-img"
+                :style="{
+                    backgroundImage: `url(${currentMod.img})`
+                }"
+            ></div>
             <div>
                 <p class="title">{{ currentMod.name }}</p>
                 <p class="other">更新时间：{{ formatDate(currentMod.updataTime) }}</p>
@@ -264,6 +270,9 @@ async function handleDownload(mod: any) {
     .image{
         width: 130px;
         height: 130px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
     }
     .info {
         width: 650px;
@@ -368,7 +377,8 @@ async function handleDownload(mod: any) {
         position: absolute;
         overflow: hidden;
         background: red;
-        // background-size: cover;
+        background-size: cover;
+        background-position: center;
         filter: blur(10px);
         -webkit-filter: blur(10px); /* 为了兼容 Webkit 内核的浏览器 */
         left: 0;
@@ -380,7 +390,7 @@ async function handleDownload(mod: any) {
         position: absolute;
         left: 0;
         top: 0;
-        background-color: rgba(0,0,0,0.9);
+        background-color: rgba(0,0,0,0.6);
         
     }
     .mod-detail-head {
@@ -389,8 +399,14 @@ async function handleDownload(mod: any) {
         z-index: 100;
         position: relative;
         display: flex;
+        flex-direction: row;
+        align-items: center;
         .head-img {
             width: 300px;
+            height: 300px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
         }
         .title {
             font-size: 36px;

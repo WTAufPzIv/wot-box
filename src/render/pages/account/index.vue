@@ -83,7 +83,7 @@ import { computed, ref, h } from 'vue';
 import { useStore } from 'vuex';
 import { formatDate } from '../../utils/common';
 import BattleReport from '../../components/BattleReport/index.vue';
-import { closeMainAndOpenLogin, fetchLestaData, openUrlByBrowser } from '@core/utils/game';
+import { closeMainAndOpenLogin, fetchLestaData, openUrlByBrowser, stopCheckGameRun } from '@core/utils/game';
 import { Modal } from 'ant-design-vue';
 import {
     ExclamationCircleOutlined,
@@ -118,6 +118,7 @@ function handleLogOut() {
         async onOk() {
             await handleFetchLogout();
             Store.dispatch(`${StoreModule.USER}/setUser`, null)
+            await stopCheckGameRun();
             closeMainAndOpenLogin()
         },
         okText: '确认',
