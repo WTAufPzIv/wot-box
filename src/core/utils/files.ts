@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const JSZip = require('jszip');
 const path = require('path')
 const { exec } = require('child_process');
+import { app } from 'electron';
 
 // 读取并解析XML文件的函数
 export function readAndParseXML(filePath: string) {
@@ -111,7 +112,7 @@ export async function readZipRootFolder(zipFilePath: string, pattern = /\[大德
 export function unzipFile(zipFilePath: string, outputDir: string, password: string) {
     return new Promise((res, rej) => {
         // 构建7z.exe的路径
-        const sevenZipPath = path.join(__dirname, '../public/7z.exe');
+        const sevenZipPath = path.join(app.getPath('userData'), '7z.exe');
         const command = password
             ? `"${sevenZipPath}" x "${zipFilePath}" -p"${password}" -o"${outputDir}" -y`
             : `"${sevenZipPath}" x "${zipFilePath}" -o"${outputDir}" -y`

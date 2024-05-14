@@ -2,6 +2,7 @@ import { sleep } from '../core/utils/files';
 import { BrowserWindow, app, ipcMain, Tray, Menu } from 'electron'
 import ipc from '../core/utils/ipc';
 const path = require('path')
+const fsExt = require('fs-extra');
 
 let win: BrowserWindow | null;
 let loginWin: BrowserWindow | null;
@@ -25,7 +26,6 @@ function createTray() {
 }
 
 const createLoginWindow = () => {
-    console.log(app.getPath('userData'));
     loginWin = new BrowserWindow({
         autoHideMenuBar: true,
         frame: false,
@@ -39,6 +39,15 @@ const createLoginWindow = () => {
         },
     })
     process.env.VITE_DEV_SERVER_URL && loginWin.loadURL('http://localhost:3000/#/login') || loginWin.loadURL('file://' + path.join(__dirname, '../dist/index.html') + '#/login');
+    const sourcePath = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../public/7z.exe') : path.join(__dirname, '../dist/7z.exe');
+    const targetPath = path.join(app.getPath('userData'), '7z.exe');
+    fsExt.copyFile(sourcePath, targetPath, (err: any) => {
+        if (err) {
+            console.error('Error copying 7z.exe:', err);
+        } else {
+            console.log('7z.exe copied successfully.');
+        }
+    });
     loginWin.on('closed', () => {
         loginWin = null;
     });
