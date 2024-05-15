@@ -4,3 +4,7 @@ export const webConf = {
     CryptoType: 3,
     CryptoKeyAes: "",
 }
+
+export const HomeApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365e0053de';
+export const ModsApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365e0702a3';
+export const sponsorApi = '';

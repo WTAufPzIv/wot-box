@@ -24,6 +24,7 @@ const mutations: MutationTree<IWn8State> = {
 const actions: ActionTree<IWn8State, IRootState> = {
     initHistory({ commit }, payload) {
         commit(Wn8Mutation.SET_HISTRORY, payload.history);
+        commit(Wn8Mutation.SET_ADMIN, payload.admin);
     },
     addHistory({ commit, state }, payload) {
         const arr = state.history.filter(item => item !== payload);

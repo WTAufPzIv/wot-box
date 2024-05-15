@@ -11,11 +11,11 @@
                 v-for="item in tabs"
             >{{ item }}</div>
         </div>
-        <div class="mod-list">
+        <div class="mod-list" ref="modListRef">
             <p class="vip-tip" v-if="selectedTab === 'VIP'">注意：VIP插件需要从盒子启动才能生效！！！</p>
             <div
                 class="mod-item"
-                v-for="item in modListData[selectedTab]"
+                v-for="item in renderModeList"
                 v-show="item.gameVersion === gameState.gameInstallations?.gameVersion"
             >
                 <div
@@ -32,6 +32,15 @@
                 </div>
                 <div class="download" @click="gotoDetail(item)">下载安装</div>
             </div>
+        </div>
+        <div class="pagination">
+            <a-pagination
+                size="small"
+                :total="modListData[selectedTab]?.length || 0"
+                :defaultPageSize="6"
+                v-model:current="currentPage"
+                @change="handleChangePage()"
+            />
         </div>
     </div>
     <div class="game-path-error" v-if="!gameState.gameInstallations">
@@ -65,8 +74,6 @@
                 <p class="title">{{ currentMod.name }}</p>
                 <p class="other">更新时间：{{ formatDate(currentMod.updataTime) }}</p>
                 <p class="other">支持的游戏版本：{{ currentMod.gameVersion }}</p>
-                <p class="other">作者：{{ currentMod.author }}</p>
-                <p class="other">搬运：{{ currentMod.transport }}</p>
                 <p class="other">大小：{{ currentMod.size }}</p>
             </div>
             <div
@@ -76,14 +83,13 @@
             >下载安装</div>
             <div
                 class="download after"
-                @click="handleDownload(currentMod)"
                 v-if="downloading"
             >
                 <div class="progress" :style="{ width: `${progress}%` }"></div>
                 <p>正在下载 {{ progress }}%  </p>
             </div>
             <div class="speed" v-if="downloading">
-                {{ speed }} MB/S
+                {{ speed }} KB/S
             </div>
         </div>
         <v-md-editor
@@ -105,6 +111,7 @@ import { StoreModule } from '@core/const/store';
 import { ModType } from '@core/const/game';
 const Store = useStore();
 const gameState = toRef(Store.state[StoreModule.GAME])
+const modListRef: any = ref(null);
 
 const tabs: any = Object.keys(ModType)
 const selectedTab :any = ref('');
@@ -116,6 +123,15 @@ const speed = ref(0);
 const downloading = ref(false);
 const userInfo = computed(() => Store.state[StoreModule.USER].userinfo)
 const modListData: any = computed(() => Store.state[StoreModule.MODS].categorize)
+const currentPage = ref(1)
+const pageSize = ref(6)
+const renderModeList = computed(()=> {
+    const startIndex = (currentPage.value - 1) * pageSize.value;
+    const endIndex = startIndex + pageSize.value;
+    return modListData.value[selectedTab.value]
+        && modListData.value[selectedTab.value].slice(startIndex, endIndex)
+        || [];
+})
 
 selectedTab.value = tabs[0]
 
@@ -123,7 +139,15 @@ const isVip = computed(() => {
     return (userInfo.value?.VipTime * 1000 || 0) > new Date().getTime()
 })
 
+function handleChangePage() {
+    console.log(modListRef.value);
+    modListRef.value.scrollTo({
+        top: 0,
+    });
+}
+
 function handleClickTab(key: any) {
+    currentPage.value = 1
     refresh.value = false;
     selectedTab.value = key
     setTimeout(() => {
@@ -242,7 +266,7 @@ async function handleDownload(mod: any) {
 }
 .mod-list {
     width: 1000px;
-    height: calc(100vh - 270px);
+    height: calc(100vh - 320px);
     margin-top: 20px;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -317,6 +341,25 @@ async function handleDownload(mod: any) {
         &:hover {
             color: #fff;
             background: #f25322;
+        }
+    }
+}
+.pagination {
+    margin-top: 20px;
+    width: 1000px;
+    height: 50px;
+    // background-color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    :deep(li button span) {
+        color: #b8b8a2 !important;
+    }
+    :deep(.ant-pagination-item) {
+        background-color: transparent;
+        border: 1px solid #b8b8a2;
+        a {
+            color: #b8b8a2;
         }
     }
 }

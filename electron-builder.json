@@ -1,8 +1,17 @@
 {
-    "files": ["dist/**/*", "dist-electron/**/*"],
+    "files": [
+        "dist/**/*",
+        "dist-electron/**/*"
+    ],
     "directories": {
         "output": "release"
     },
+    "publish": [
+        {
+            "provider": "generic",
+            "url": "https://wtaufpziv.github.io/static-test"
+        }
+    ],
     "appId": "com.example.app",
     "productName": "坦克世界大德盒子",
     "win": {

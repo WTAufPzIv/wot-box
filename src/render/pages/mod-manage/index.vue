@@ -74,8 +74,6 @@
                 <p class="title">{{ currentMod.name }}</p>
                 <p class="other">更新时间：{{ formatDate(currentMod.updataTime) }}</p>
                 <p class="other">支持的游戏版本：{{ currentMod.gameVersion }}</p>
-                <p class="other">作者：{{ currentMod.author }}</p>
-                <p class="other">搬运：{{ currentMod.transport }}</p>
                 <p class="other">大小：{{ currentMod.size }}</p>
             </div>
             <div
@@ -85,14 +83,13 @@
             >下载安装</div>
             <div
                 class="download after"
-                @click="handleDownload(currentMod)"
                 v-if="downloading"
             >
                 <div class="progress" :style="{ width: `${progress}%` }"></div>
                 <p>正在下载 {{ progress }}%  </p>
             </div>
             <div class="speed" v-if="downloading">
-                {{ speed }} MB/S
+                {{ speed }} KB/S
             </div>
         </div>
         <v-md-editor

@@ -30,8 +30,8 @@ const actions: ActionTree<IGameState, IRootState> = {
             dispatch('checkAllGameInstallation');
         }
     },
-    async addGameInstallation({ commit, dispatch }) {
-        const res = await addGamePathByDialog();
+    async addGameInstallation({ commit, dispatch }, openDialog: any = null) {
+        const res = openDialog ? { status: 1, payload: openDialog.path, message: '' } : await addGamePathByDialog();
         const { status, payload, message } = res;
         if (status && payload) {
             try {

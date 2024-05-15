@@ -5,7 +5,10 @@ import { createStore } from 'vuex';
 import Game from './modules/game';
 import Mods from './modules/mods';
 import Wn8 from './modules/wn8';
-import User from './modules/user'
+import User from './modules/user';
+import Loading from './modules/loading';
+import Home from './modules/home';
+import Sponsor from './modules/sponsor';
 import { sleep } from '../utils/common';
 
 
@@ -15,7 +18,10 @@ const store = createStore({
         [StoreModule.GAME]: Game,
         [StoreModule.MODS]: Mods,
         [StoreModule.WN8]: Wn8,
-        [StoreModule.USER]: User
+        [StoreModule.USER]: User,
+        [StoreModule.LOADING]: Loading,
+        [StoreModule.HOME]: Home,
+        [StoreModule.SPONSOR]: Sponsor,
     },
     plugins: [
         async (store) => {

@@ -8,6 +8,8 @@ export interface IUserState {
     gameReport: Record<string, any> | null,
     account: string,
     password: string,
+    remember: boolean,
+    autoLogin: boolean,
 }
 
 const state: IUserState = {
@@ -16,6 +18,8 @@ const state: IUserState = {
     bindGameUser: '',
     account: '',
     password: '',
+    remember: false,
+    autoLogin: false,
 };
 
 const mutations: MutationTree<IUserState> = {
@@ -30,9 +34,16 @@ const mutations: MutationTree<IUserState> = {
     },
     [UserMutation.SET_ACCOUNT](state: IUserState, payload: any) {
         state.account = payload;
-    },[UserMutation.SET_PASSWORD](state: IUserState, payload: any) {
+    },
+    [UserMutation.SET_PASSWORD](state: IUserState, payload: any) {
         state.password = payload;
-    }
+    },
+    [UserMutation.SET_REMEMBER](state: IUserState, payload: any) {
+        state.remember = payload;
+    },
+    [UserMutation.SET_AUTO_LOGIN](state: IUserState, payload: any) {
+        state.autoLogin = payload;
+    },
 };
 
 const actions: ActionTree<IUserState, IRootState> = {
@@ -42,6 +53,8 @@ const actions: ActionTree<IUserState, IRootState> = {
         commit(UserMutation.SET_BIND_GAME_USER, payload.bindGameUser);
         commit(UserMutation.SET_ACCOUNT, payload.account);
         commit(UserMutation.SET_PASSWORD, payload.password);
+        commit(UserMutation.SET_REMEMBER, payload.remember);
+        commit(UserMutation.SET_AUTO_LOGIN, payload.autoLogin);
     },
     setUser({ commit }, payload) {
         commit(UserMutation.SET_USER_INFO, payload);
@@ -60,6 +73,12 @@ const actions: ActionTree<IUserState, IRootState> = {
     },
     setGameReport({ commit }, payload) {
         commit(UserMutation.SET_GAME_REPORT, payload);
+    },
+    setRemember({ commit }, payload) {
+        commit(UserMutation.SET_REMEMBER, payload);
+    },
+    setAutoLogin({ commit }, payload) {
+        commit(UserMutation.SET_AUTO_LOGIN, payload);
     },
 }
 

@@ -33,3 +33,8 @@ export const getCurrentTime = () => {
     let outcome = Math.round(new Date().getTime() / 1000).toString();
     return Number(outcome)
 }
+
+export function sortByKey(arr: any[], key: string) {
+    const sortedArr = arr.sort((a, b) => Number(b[key]) - Number(a[key]));
+    return sortedArr;
+}

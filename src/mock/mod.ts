@@ -144,7 +144,7 @@ export const modList = [
     },
     {
         name: '【日语】非常吵的雪风大人语音包nanoda',
-        updataTime: 1715251489000,
+        updataTime: 1715251489,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/09/WesHiCbc.png',
         detailMd: '**用了可能出现以下症状nanoda：我没疯nanoda！**\n\n\n\n[视频预览](https://www.bilibili.com/video/BV1qa411n7e5)\n\n\n\n更新日志：\n\n\n\n- 2023.10.12：应网友要求加了几条语音。\n\n- 2023.3.14：更新文件，屏蔽了特殊车长语音。\n\n- 2022.7.12更新：修复了起火的音效过大的问题\n\n\n\n特别提示：由于本语音修改了声音设置，和一些炮声插件等不兼容。',
@@ -155,7 +155,7 @@ export const modList = [
     },
     {
         name: '刘海柱语音包',
-        updataTime: 1715251489000,
+        updataTime: 1715251499,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/OYvUb6aM.png',
         detailMd: '',
@@ -166,7 +166,7 @@ export const modList = [
     },
     {
         name: '亮剑语音包',
-        updataTime: 1715251489000,
+        updataTime: 1715251489,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/TlrfH5AV.png',
         detailMd: '',
@@ -177,7 +177,7 @@ export const modList = [
     },
     {
         name: '夏一可语音包',
-        updataTime: 1715251489000,
+        updataTime: 1715251489,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/xOk2GLf5.png',
         detailMd: '',
@@ -188,7 +188,7 @@ export const modList = [
     },
     {
         name: '少女与战车农娜语音包',
-        updataTime: 1715251489000,
+        updataTime: 1715251489,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/Tg92bDRL.png',
         detailMd: '',
@@ -199,7 +199,7 @@ export const modList = [
     },
     {
         name: '老款车长语音包',
-        updataTime: 1715251489000,
+        updataTime: 1715251489,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/S0vTtx6I.png',
         detailMd: '',
@@ -210,7 +210,7 @@ export const modList = [
     },
     {
         name: '【国语】芝芝葡桃语音包',
-        updataTime: 1715251489000,
+        updataTime: 1715251489,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/U6IMrOwd.png',
         detailMd: '',
@@ -386,7 +386,7 @@ export const modList = [
     },
     {
         name: '二次元头像1',
-        updataTime: 1715243329,
+        updataTime: 1715243356,
         gameVersion: '1.26.0.0',
         img: 'https://img2.imgtp.com/2024/05/14/PnO0IFlq.png',
         detailMd: '',

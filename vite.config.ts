@@ -12,11 +12,11 @@ export default defineConfig({
     electron([
       {
         entry: "src/electron/main.ts", // 主进程文件
-        vite: { build: { outDir: "dist-electron" } },
+        vite: { build: { outDir: "app/dist-electron" } },
       },
       {
         entry: "src/electron/preload.js",
-        vite: { build: { outDir: "dist-electron" } },
+        vite: { build: { outDir: "app/dist-electron" } },
       }
     ]),
     electronRenderer(),

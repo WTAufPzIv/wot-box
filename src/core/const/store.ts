@@ -10,6 +10,7 @@ export enum ModMutation {
     SET_INSTALLED_CATEGORIZE = 'setInstalledCategorize',
     SET_INSTALLED_NAME = 'setInstalledName',
     SET_INSTALLED_VIP = 'setInstalledVip',
+    SET_HAS_NEW = 'setHasNew',
 }
 
 export enum Wn8Mutation {
@@ -23,10 +24,24 @@ export enum UserMutation {
     SET_BIND_GAME_USER = 'setBindGameUser',
     SET_ACCOUNT = 'setAccount',
     SET_PASSWORD = 'setPassword',
+    SET_REMEMBER = 'setRemember',
+    SET_AUTO_LOGIN = 'setAutoLogin',
 }
 
 export enum TransMutation {
     SET_TRANS = 'setTrans',
+}
+
+export enum LoadingMutation {
+    SET_LOADING = 'setLoading',
+}
+
+export enum HomeMutation {
+    SET_HOME_DATA = 'setHomeData'
+}
+
+export enum SponsorMutation {
+    SET_SPONSOR_DATA = 'setSponsorData'
 }
 
 export enum StoreModule {
@@ -37,5 +52,11 @@ export enum StoreModule {
     // 战绩查询相关信息
     WN8 = "WN8",
     // 用户账户相关信息
-    USER = 'USER'
+    USER = 'USER',
+    // 全局加载
+    LOADING = 'LOADING',
+    // 首页信息
+    HOME = 'HOME',
+    // 赞助信息
+    SPONSOR = 'SPONSOR'
 }

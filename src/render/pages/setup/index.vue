@@ -8,17 +8,7 @@
           <p>{{ gameState.gameInstallations?.path || '' }}</p>
         </div>
         <div class="add-button download" @click="handleClick()">设置游戏路径</div>
-        <div class="add-button download" @click="handleOpenFolder(gameState.gameInstallations?.path || '')" v-if="gameState.gameInstallations">打开游戏目录</div>
-        <!-- <a class="add-button" @click="handleClick">
-          <span>
-            设置游戏路径
-          </span>
-        </a>
-        <a class="add-button" @click="handleOpenFolder(gameState.gameInstallations?.path || '')" v-if="gameState.gameInstallations">
-          <span>
-            打开游戏目录
-          </span>
-        </a> -->
+        <div class="add-button download" @click="handleSearch()">自动搜索</div>
       </div>
       <div class="ext-info" v-if="gameState.gameInstallations">
         <p>游戏名称：{{ gameState.gameInstallations?.gameName || '' }}</p>
@@ -28,20 +18,23 @@
     <div class="setup-item">
       <p class="setup-title">其他</p>
       <div class = "other-btn">
+        <div class="btn" @click="handleOpenFolder(gameState.gameInstallations?.path || '')" v-if="gameState.gameInstallations">打开游戏目录</div>
         <div class="btn" @click="handleCheckVersion()">检查更新</div>
         <div class="btn" @click="handleClearAppData()">清除应用数据</div>
         <div class="btn" @click="handleOpenAppData()" v-if="isAdmin">打开AppData文件夹</div>
       </div>
     </div>
   </div>
+  <UpgeadeModal :open="open" @close="open=false" ref="upgeadeModal"></UpgeadeModal>
 </template>
 
 <script setup lang="ts">
 import { StoreModule } from '@core/const/store';
-import { deleteAppData, ipcMessageTool, restartApp } from '@core/utils/game';
-import { toRef, h, computed } from 'vue';
+import { addGamePathBySearch, deleteAppData, ipcMessageTool, restartApp } from '@core/utils/game';
+import { toRef, h, computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { Modal } from 'ant-design-vue';
+import UpgeadeModal from '../../components/UpgradeModal/index.vue';
 import {
     ExclamationCircleOutlined,
 } from '@ant-design/icons-vue'
@@ -50,18 +43,51 @@ import { sleep } from '@src/render/utils/common';
 const Store = useStore();
 const gameState = toRef(Store.state[StoreModule.GAME])
 const isAdmin = computed(() => Store.state[StoreModule.WN8].admin);
+const open = ref(false);
+const upgeadeModal = ref(null);
 
 function handleClick() {
   Store.dispatch(`${StoreModule.GAME}/addGameInstallation`);
+}
+
+async function handleSearch() {
+  try {
+    Store.dispatch(`${StoreModule.LOADING}/setLoading`, true);
+    const res = await addGamePathBySearch();
+    Store.dispatch(`${StoreModule.LOADING}/setLoading`, false);
+    Modal.confirm({
+      title: '查找到以下目录：' + res + '。请确定是否为坦克世界俄服游戏安装目录',
+      icon: h(ExclamationCircleOutlined),
+      async onOk() {
+        Store.dispatch(`${StoreModule.GAME}/addGameInstallation`, { path: res });
+      },
+      okText: '确认',
+      cancelText: '取消',
+      class: 'custom-error-dialog'
+    });
+  } catch {
+    Modal.error({
+        title: `游戏查找失败，请手动选择游戏路径`,
+        class: 'custom-error-dialog',
+        okText: '知道了',
+    });
+  }
 }
 
 function handleOpenFolder(path: string) {
   ipcMessageTool('file', 'open-folder', { path });
 }
 
-function handleCheckVersion() {
-
+async function handleCheckVersion() {
+  // (window as any).electron.ipcRenderer.on('printUpdaterMessage', (message: any) => {
+  //     console.log(message);
+  // });
+  // ipcMessageTool('updater', 'check-for-updates');
+  open.value = true;
+  await sleep(100);
+  (upgeadeModal.value as any).handleStartCheckVersion();
 }
+
 function handleOpenAppData() {
   ipcMessageTool('file', 'open-add-data');
 }

@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const JSZip = require('jszip');
 const path = require('path')
 const { exec } = require('child_process');
-import { app } from 'electron';
+const { app } = require('electron');
 
 // 读取并解析XML文件的函数
 export function readAndParseXML(filePath: string) {

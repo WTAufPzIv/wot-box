@@ -10,6 +10,7 @@ const fsExt = require('fs-extra');
 const { rimrafSync } = require('rimraf')
 const { spawn } = require('child_process');
 const tempZipPath = `${app.getPath('temp')}/downloaded.zip`;
+const regedit = require('regedit');
 let interval: any = null;
 
 // 程序app data相关路径
@@ -100,6 +101,24 @@ export default (mainWindow: BrowserWindow) => {
       case 'show-error-dialog':
         const { title, message } = args;
         dialog.showErrorBox(title, message);
+        break;
+      case 'search-game-path':
+        const regeditPath = 'HKCU\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Compatibility Assistant\\Store';
+        regedit.list(regeditPath, (err: any, res: any) => {
+          if (err) {
+            event.sender.send('search-game-path-res', createFailIpcMessage(err));
+          } else {
+            // const arr = 
+            if (res[regeditPath] && res[regeditPath].exists) {
+              const arr = Object.keys(res[regeditPath].values).filter(item => {
+                return item.includes('\\Tanki\\lgc_api.exe')
+              })
+              event.sender.send('search-game-path-res', createSuccessIpcMessage(arr));
+            } else {
+              event.sender.send('search-game-path-res', createFailIpcMessage(''));
+            }
+          }
+        })
         break;
     }
   })
@@ -388,9 +407,6 @@ export default (mainWindow: BrowserWindow) => {
           let receivedLength = 0;
           let lastReceivedTime = Date.now();
 
-          let lastUpdateTime = 0;
-          const updateInterval = 50; // Update every 500 milliseconds (0.5 second)
-
           response.data.on('data', (chunk: any) => {
               receivedLength += chunk.length;
               const now = Date.now();
@@ -398,11 +414,8 @@ export default (mainWindow: BrowserWindow) => {
               const speed = chunk.length / timeElapsed; // bytes per second
               lastReceivedTime = now;
 
-              if (now - lastUpdateTime > updateInterval) {
-                const progress = Math.round((receivedLength / totalLength) * 100);
-                event.sender.send('download-progress', { progress, speed: (speed / 1024 / 1024).toFixed(2) });
-                lastUpdateTime = now;
-              }
+              const progress = Math.round((receivedLength / totalLength) * 100);
+              event.sender.send('download-progress', { progress, speed: (speed / 1024 / 1024).toFixed(2)  });
           });
 
           response.data.pipe(writer);

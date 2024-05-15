@@ -21,7 +21,7 @@
                     />
                 </div>
                 <div class="input-wrapper">
-                    <a-input
+                    <a-input-password
                         v-model:value="superPassword"
                         size="large"
                         placeholder="超级密码"
@@ -30,7 +30,7 @@
                     />
                 </div>
                 <div class="input-wrapper">
-                    <a-input
+                    <a-input-password
                         v-model:value="password"
                         size="large"
                         placeholder="新密码"
@@ -60,22 +60,27 @@
                     />
                 </div>
                 <div class="input-wrapper">
-                    <a-input
+                    <a-input-password
                         v-model:value="password"
                         size="large"
                         placeholder="密码"
+                        type="password"
                         :bordered="false"
                         class="custom-input"
                     />
                 </div>
                 <div class="input-wrapper" v-if="active === 'signup'">
-                    <a-input
+                    <a-input-password
                         v-model:value="superPassword"
                         size="large"
                         placeholder="超级密码"
                         :bordered="false"
                         class="custom-input"
                     />
+                </div>
+                <div class="login-setup" v-if="active === 'login'">
+                    <a-checkbox v-model:checked="remember" @change="handleChangeRemember">记住密码</a-checkbox>
+                    <!-- <a-checkbox v-model:checked="autoLogin" @change="handleChangeAutoLogin">自动登录</a-checkbox> -->
                 </div>
                 <div class="login-btn" @click="loginAndSignup">{{ active === 'login' ? '登录' : '注册' }}</div>
                 <p class="forget" v-if="active === 'login'" @click="forget=true">找回密码</p>
@@ -96,7 +101,6 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import { closeLoginAndOpenMain } from '@core/utils/game';
 import { handleFetchFoeget, handleFetchLogin, handleFetchSignup } from '@src/render/utils/fetch';
 import { computed, ref, watch } from 'vue';
-// import { sleep } from '@src/render/utils/common';
 import { useStore } from 'vuex';
 import { StoreModule } from '@core/const/store';
 import { Modal } from 'ant-design-vue';
@@ -109,8 +113,13 @@ const loading = ref(false);
 const active = ref('login')
 const forget = ref(false);
 const Store = useStore();
+const remember = ref(false);
+const autoLogin = ref(false);
+const hasCheckAuto = ref(false);
 const storeAccount = computed(() => Store.state[StoreModule.USER].account)
 const storePassword = computed(() => Store.state[StoreModule.USER].password)
+const storeRemember = computed(() => Store.state[StoreModule.USER].remember)
+const storeAutoLogin = computed(() => Store.state[StoreModule.USER].autoLogin)
 
 watch(storeAccount, (newVal) => {
     username.value = newVal
@@ -119,6 +128,26 @@ watch(storeAccount, (newVal) => {
 watch(storePassword, (newVal) => {
     password.value = newVal
 })
+
+watch(storeRemember, (newVal) => {
+    remember.value = newVal;
+})
+
+watch(storeAutoLogin, (newVal) => {
+    autoLogin.value = newVal
+    if (!hasCheckAuto.value && newVal) {
+        loginAndSignup();
+    }
+    hasCheckAuto.value = true;
+})
+
+function handleChangeRemember() {
+    Store.dispatch(`${StoreModule.USER}/setRemember`, remember.value)
+}
+
+// function handleChangeAutoLogin() {
+//     Store.dispatch(`${StoreModule.USER}/setAutoLogin`, autoLogin.value)
+// }
 
 function handleClose() {
     (window as any).electron.ipcRenderer.send('login-window-control', 'close');
@@ -138,9 +167,13 @@ async function loginAndSignup() {
                     throw new Error(JSON.stringify(res));
                 }
             }
-            Store.dispatch(`${StoreModule.USER}/setUser`, Data)
-            Store.dispatch(`${StoreModule.USER}/setAccout`, username.value)
-            Store.dispatch(`${StoreModule.USER}/setPassword`, password.value)
+            await Store.dispatch(`${StoreModule.USER}/setUser`, Data)
+            await Store.dispatch(`${StoreModule.USER}/setAccout`, username.value)
+            if (remember.value) {
+                await Store.dispatch(`${StoreModule.USER}/setPassword`, password.value)
+            } else {
+                await Store.dispatch(`${StoreModule.USER}/setPassword`, '')
+            }
             await sleep(500);
             loading.value = false;
             closeLoginAndOpenMain()
@@ -290,6 +323,19 @@ async function HandleForget() {
     .input-wrapper {
         display: flex;
         width: 300px;
+        :deep(input) {
+            color: #b8b8a2;
+        }
+        :deep(input::placeholder) {
+            color: #b8b8a2;
+            opacity: 0.4;
+        }
+        :deep(span) {
+            color: #b8b8a2;
+        }
+        :deep(span:hover) {
+            color: #b8b8a2;
+        }
         .custom-input {
             width: 300px;
             height: 42px;
@@ -308,6 +354,18 @@ async function HandleForget() {
             }
         }
     }
+    .login-setup {
+        width: 300px;
+        height: 50px;
+        // background-color: red;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        :deep(span) {
+            color: #b8b8a2;
+        }
+    }
     .login-btn {
         width: 300px;
         height: 42px;
@@ -316,7 +374,7 @@ async function HandleForget() {
         color: #fff;
         text-align: center;
         line-height: 42px;
-        margin-top: 30px;
+        margin-top: 10px;
         cursor: pointer;
     }
     .forget {

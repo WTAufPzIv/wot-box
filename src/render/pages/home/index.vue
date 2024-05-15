@@ -1,8 +1,8 @@
 <template>
-  <div class="home-page">
+  <div class="home-page" v-if="homeData">
     <div class="left">
       <p class="part-name">近期动态与公告</p>
-      <div class="supernews">{{ supernews.title }}</div>
+      <div class="supernews" @click="handleOpen(supernews[0])">{{ supernews && supernews[0]?.title }}</div>
       <div class="news">
         <div
           class="news-item"
@@ -10,6 +10,7 @@
           @click="handleOpen(item)"
         >
           <span class="title">{{ item.title }}</span>
+          <span class="top-icon">置顶</span>
           <span class="time">{{ formatDate(item.updataTime) }}</span>
         </div>
         <div
@@ -73,16 +74,21 @@
 </template>
 
 <script setup lang="ts">
-import { homeData } from '../../../mock/home';
-import { formatDate } from '../../utils/common';
-import { ref } from 'vue'
+import { formatDate, sortByKey } from '../../utils/common';
+import { computed, ref } from 'vue'
 import { openUrlByBrowser } from '@core/utils/game';
+import { useStore } from 'vuex';
+import { StoreModule } from '@core/const/store';
 
-const supernews = homeData.supernews;
-const topnews = homeData.topnews;
-const news = homeData.news;
-const video = homeData.video;
-const adv = homeData.adv;
+const Store = useStore();
+Store.dispatch(`${StoreModule.HOME}/fetHomeData`);
+
+const homeData = computed(() => Store.state[`${StoreModule.HOME}`].homeData);
+const supernews = computed(() => Store.state[`${StoreModule.HOME}`].homeData.supernews);
+const topnews = computed(() => sortByKey(Store.state[`${StoreModule.HOME}`].homeData.topnews, 'updataTime'));
+const news = computed(() => sortByKey(Store.state[`${StoreModule.HOME}`].homeData.news, 'updataTime'));
+const video = computed(() => Store.state[`${StoreModule.HOME}`].homeData.video);
+const adv = computed(() => Store.state[`${StoreModule.HOME}`].homeData.adv);
 
 const open = ref(false);
 const currentNews: any = ref({});
@@ -113,6 +119,7 @@ function gotoVideo(url: string) {
       font-size: 22px;
       font-weight: bold;
       margin-top: 20px;
+      cursor: pointer;
     }
     .news {
       margin-top: 10px;
@@ -166,7 +173,7 @@ function gotoVideo(url: string) {
         transition: opacity .3s ease-out,visibility .3s ease-out;
       }
       .title {
-        width: 450px;
+        width: 400px;
         text-overflow: ellipsis;
         text-wrap: nowrap;
         overflow: hidden;
@@ -174,10 +181,20 @@ function gotoVideo(url: string) {
         font-size: 18px;
         color: #b8b8a2;
       }
+      .top-icon {
+        // width: 40px;
+        color: #f25322;
+        font-size: 12px;
+        padding: 2px 4px;
+        border: solid 1px #f25322;
+      }
       .time {
         font-size: 14px;
         color: #b8b8a2;
         opacity: 0.5;
+        width: 80px;
+        text-align: right;
+        // background-color: yellow;
       }
       .goto-url {
         position: absolute;

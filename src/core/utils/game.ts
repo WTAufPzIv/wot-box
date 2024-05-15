@@ -22,6 +22,23 @@ export async function addGamePathByDialog(): Promise<IipcMessage> {
     return await ipcMessageTool('dialog', 'open-directory-dialog', {}, 'selected-directory')
 }
 
+export async function addGamePathBySearch(): Promise<any> {
+    return new Promise(async (res, rej) => {
+        const resp = await ipcMessageTool('dialog', 'search-game-path', {}, 'search-game-path-res');
+        if (resp.status) {
+            const pathArr = resp.payload;
+            if (pathArr.length === 0) rej('未查找到游戏');
+            for(const item of pathArr) {
+                const temp = item.replace('\\lgc_api.exe', '')
+                const isWot = await isWotFolder(temp);
+                if (isWot) res(temp);
+            }
+        } else {
+            rej(resp.message)
+        }
+    })
+}
+
 export async function showErrorByDialog(title: string, message: string) {
     return await alert(title + message)
 }
@@ -35,7 +52,7 @@ export async function isWotFolder(path: string): Promise<boolean> {
         'lgc_api.exe'
     ]
     const list = await ipcMessageTool('file', 'get-file-list', { path }, 'send-file-list')
-    return list.payload && list.payload.length > 0 && checkList.every(element => list.payload.includes(element));
+    return (list.status && list.payload && list.payload.length > 0 && checkList.every(element => list.payload.includes(element))) || 0;
 }
 
 export async function parseGameInstallation(path: string) {

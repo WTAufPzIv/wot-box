@@ -1,9 +1,9 @@
 import { ModMutation, StoreModule } from '@src/core/const/store';
 import { Module, MutationTree, ActionTree } from 'vuex';
 import { IRootState } from '../type';
-import { modList } from '../../../mock/mod';
-import { sleep } from '@src/render/utils/common';
 import { deleteVip, extractVip, getInstalledMods, getInstalledTrans, showErrorByDialog } from '@core/utils/game';
+import axios from 'axios';
+import { ModsApi } from '@core/const/api';
 
 export interface IModState {
     categorize: any,
@@ -13,6 +13,7 @@ export interface IModState {
     installedName: any,
     installedTrans: any,
     installedVip: any,
+    hasNew: boolean,
 }
 
 const state: IModState = {
@@ -23,6 +24,7 @@ const state: IModState = {
     installedName: {},
     installedTrans: {},
     installedVip: {},
+    hasNew: false,
 };
 
 const mutations: MutationTree<IModState> = {
@@ -47,23 +49,39 @@ const mutations: MutationTree<IModState> = {
     [ModMutation.SET_INSTALLED_VIP](state: IModState, payload: any) {
         state.installedVip = payload;
     },
+    [ModMutation.SET_HAS_NEW](state: IModState, payload: any) {
+        state.hasNew = payload;
+    },
 };
 
 const actions: ActionTree<IModState, IRootState> = {
-    async initModData({ commit }) {
-        await sleep(100);
+    async initModData({ commit, dispatch }) {
         const cat: any = {};
         const name: any = {};
-        modList.forEach(item => {
-            if (!cat[item.categorize]) cat[item.categorize] = [];
-            cat[item.categorize].push(item);
-            name[item.name] = item;
-        });
-        commit(ModMutation.SET_CATEGORIZE, cat);
-        commit(ModMutation.SET_NAME, name);
+        try {
+            dispatch(`${StoreModule.LOADING}/setLoading`, true, { root: true });
+            const { data } = await axios.get(ModsApi);
+            const { mods: modList } = data;
+            if (modList) {
+                modList.forEach((item: any) => {
+                    if (!cat[item.categorize]) cat[item.categorize] = [];
+                    cat[item.categorize].push(item);
+                    name[item.name] = item;
+                });
+                commit(ModMutation.SET_CATEGORIZE, cat);
+                commit(ModMutation.SET_NAME, name);
+            }
+        } catch (err) {
+            showErrorByDialog('网络错误', '请稍后再试')
+        } finally {
+            dispatch(`${StoreModule.LOADING}/setLoading`, false, { root: true });
+        }
+        
     },
     async initInstalled({ commit, rootState, state }) {
+        commit(ModMutation.SET_HAS_NEW, false);
         const gamePath = rootState[StoreModule.GAME].gameInstallations?.path;
+        const gameVersion = rootState[StoreModule.GAME].gameInstallations?.gameVersion;
         if (!gamePath) return commit(ModMutation.SET_INSTALLED, []);
         const res = await getInstalledMods(gamePath);
         if (res.status) {
@@ -79,6 +97,15 @@ const actions: ActionTree<IModState, IRootState> = {
                 if (!categorize[item.categorize]) categorize[item.categorize] = [];
                 categorize[item.categorize].push(item);
                 name[item.name] = item;
+                if (
+                    gameVersion === item.gameVersion
+                    && state.name[item.name]
+                    && state.name[item.name].gameVersion === item.gameVersion
+                    && state.name[item.name].updataTime !== item.updataTime
+                    && !state.hasNew
+                ) {
+                    commit(ModMutation.SET_HAS_NEW, true);
+                }
             })
             commit(ModMutation.SET_INSTALLED, list);
             commit(ModMutation.SET_INSTALLED_CATEGORIZE, categorize);

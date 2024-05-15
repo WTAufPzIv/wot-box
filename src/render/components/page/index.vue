@@ -6,6 +6,12 @@
         <header-bar></header-bar>
         <div class="main-wrapper" id="main-wrapper">
             <a-side></a-side>
+            <div class="loading-wrapper" v-if="isLoading">
+                <div class="loading-icon">
+                    <div class="loading1"></div>
+                    <div class="loading2"></div>
+                </div>
+            </div>
             <div class="main-container">
                 <slot></slot>
             </div>
@@ -28,8 +34,12 @@ import ASide from '../Aside/index.vue';
 import StartGame from '../StartGame/index.vue';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { StoreModule } from '@core/const/store';
 
 const route = useRoute();
+const Store = useStore();
+const isLoading = computed(() => Store.state[`${StoreModule.LOADING}`].loading)
 const isLogin = computed(() => route.path === '/login')
 </script>
 
@@ -51,6 +61,7 @@ const isLogin = computed(() => route.path === '/login')
 .main-wrapper{
     display: flex;
     flex-direction: row;
+    position: relative;
 }
 .bottom-bar {
     position: absolute;
@@ -99,6 +110,48 @@ const isLogin = computed(() => route.path === '/login')
         overflow-y: scroll;
         &::-webkit-scrollbar {
             display: none;
+        }
+    }
+}
+.loading-wrapper {
+    width: calc(100vw - 160px);
+    height: calc(100vh - 160px);
+    background: rgba(0,0,0,0.8);
+    position: absolute;
+    left: 160px;
+    top: 0;
+    z-index: 999;
+    .loading-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: 9px 0 0;
+        will-change: transform;
+        transform: translate(-50%, -50%);
+        width: 114px;
+        height: 114px;
+        text-align: center;
+        z-index: 9999;
+        .loading1 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('@render/assets/loading1.svg') center no-repeat;
+            animation: rotate 3s linear infinite;
+            z-index: 9999;
+        }
+        .loading2 {
+            position: absolute;
+            transform: translate(0);
+            will-change: transform;
+            top: 6px;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url("@render/assets/loading2.svg") center no-repeat;
+            z-index: 9999;
         }
     }
 }
