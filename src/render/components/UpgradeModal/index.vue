@@ -1,14 +1,14 @@
 <template>
     <a-modal
-        :open="isopen"
+        :open="isopen || forceOpen"
         @cancel="handleCancel"
         width="600px"
         wrap-class-name="upgrade-detail-dialog"
         :footer="null"
         :maskClosable="false"
         :centered="true"
-        :destroyOnClose="true"
-        :closable="true"
+        :destroyOnClose="false"
+        :closable="false"
     >
         <div class="upgrade-wrapper">
             <p class="text">
@@ -36,7 +36,7 @@
             >立即更新</div>
             <div
                 class="download after"
-                v-if="message === '下载中'"
+                v-if="message.includes('下载中')"
             >
                 <div class="progress" :style="{ width: `${progress}%` }"></div>
                 <p>下载中 {{ progress }}%  </p>
@@ -44,7 +44,7 @@
             <div
                 class="download before"
                 @click="handleInstall()"
-                v-if="message === '下载完成'"
+                v-if="message.includes('下载完成')"
             >立即安装</div>
         </div>
     </a-modal>
@@ -66,6 +66,8 @@ const isopen = computed(() => props.open)
 const message = ref('正在检查更新')
 const progress = ref(0);
 
+const forceOpen = ref(false);
+
 function handleCancel() {
     emit('close');
 }
@@ -73,6 +75,17 @@ function handleCancel() {
 function handleStartCheckVersion() {
   (window as any).electron.ipcRenderer.on('printUpdaterMessage', (msg: any) => {
     message.value = msg;
+  });
+  // 有新版本时强制弹窗
+  (window as any).electron.ipcRenderer.on('updateAvailable', () => {
+    forceOpen.value = true;
+  });
+  // 没有更新或者检查更新出错时放开进程
+  (window as any).electron.ipcRenderer.on('updateNotAvailable', () => {
+    emit('exit');
+  });
+  (window as any).electron.ipcRenderer.on('upgradeError', () => {
+    emit('exit');
   });
   ipcMessageTool('updater', 'check-for-updates');
 }

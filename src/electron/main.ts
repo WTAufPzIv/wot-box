@@ -36,7 +36,7 @@ Object.defineProperty(app, 'isPackaged', {
 // 将日志在渲染进程里面打印出来
 function printUpdaterMessage(arg: any, ext = '') {
     const message: any = {
-        error: "更新出错",
+        upgradeError: "更新出错",
         checking: "正在检查更新",
         updateAvailable: "检测到新版本 ",
         downloadProgress: "下载中",
@@ -53,7 +53,9 @@ autoUpdater.setFeedURL("https://wtaufpziv.github.io/static-test")
 autoUpdater.autoDownload = false
 
 autoUpdater.on("error", function () {
-    printUpdaterMessage('error');
+    printUpdaterMessage('upgradeError');
+    win && win.webContents.send("upgradeError");
+    loginWin && loginWin.webContents.send("upgradeError");
 });
 
 // 2. 开始检查是否有更新
@@ -65,11 +67,15 @@ autoUpdater.on("checking-for-update", function () {
 autoUpdater.on("update-available", function (info: any) {
     printUpdaterMessage('updateAvailable', ` V${info.version}`);
     // 4. 告诉渲染进程有更新，info包含新版本信息
+    win && win.webContents.send("updateAvailable", info.version);
+    loginWin && loginWin.webContents.send("updateAvailable", info.version);
 });
 
 // 5. 没有新版本时通知
 autoUpdater.on("update-not-available", function () {
     printUpdaterMessage('updateNotAvailable');
+    win && win.webContents.send("updateNotAvailable");
+    loginWin && loginWin.webContents.send("updateNotAvailable");
 });
 
 // 8. 下载进度，包含进度百分比、下载速度、已下载字节、总字节等
@@ -159,6 +165,23 @@ const createLoginWindow = () => {
             case 'close':
                 loginWin!.close();
                 break;
+        }
+    });
+    ipcMain.on('updater', async (event, command) => {
+        // 用一下这个参数
+        JSON.stringify(event)
+        switch (command) {
+            // 1. 在渲染进程里触发获取更新，开始进行更新流程。 (根据具体需求)
+            case 'check-for-updates':
+                autoUpdater.checkForUpdates();
+                break;
+            // 7. 收到确认更新提示，执行下载
+            case 'comfirm-update':
+                autoUpdater.downloadUpdate();
+                break;
+            case 'update-now':
+                 // 12. 立即更新安装
+                 autoUpdater.quitAndInstall();
         }
     });
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {

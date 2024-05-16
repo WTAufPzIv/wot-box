@@ -82,7 +82,7 @@
                     <a-checkbox v-model:checked="remember" @change="handleChangeRemember">记住密码</a-checkbox>
                     <!-- <a-checkbox v-model:checked="autoLogin" @change="handleChangeAutoLogin">自动登录</a-checkbox> -->
                 </div>
-                <div class="login-btn" @click="loginAndSignup">{{ active === 'login' ? '登录' : '注册' }}</div>
+                <div class="login-btn" @click="loginAndSignup">{{ waitForUpgrade ? '请稍后...' : (active === 'login' ? '登录' : '注册') }}</div>
                 <p class="forget" v-if="active === 'login'" @click="forget=true">找回密码</p>
             </template>
         </div>
@@ -93,6 +93,12 @@
             <div class="loading2"></div>
         </div>
     </div>
+    <UpgeadeModal
+        :open="openUpgrade"
+        @close="openUpgrade=false"
+        @exit="waitForUpgrade = false"
+        ref="upgeadeModal"
+    ></UpgeadeModal>
 </template>
 
 
@@ -105,6 +111,7 @@ import { useStore } from 'vuex';
 import { StoreModule } from '@core/const/store';
 import { Modal } from 'ant-design-vue';
 import { sleep } from '@src/render/utils/common';
+import UpgeadeModal from '../../components/UpgradeModal/index.vue';
 
 const username = ref('');
 const password = ref('');
@@ -116,6 +123,9 @@ const Store = useStore();
 const remember = ref(false);
 const autoLogin = ref(false);
 const hasCheckAuto = ref(false);
+const upgeadeModal = ref(null);
+const openUpgrade = ref(false);
+const waitForUpgrade = ref(false);
 const storeAccount = computed(() => Store.state[StoreModule.USER].account)
 const storePassword = computed(() => Store.state[StoreModule.USER].password)
 const storeRemember = computed(() => Store.state[StoreModule.USER].remember)
@@ -148,12 +158,17 @@ function handleChangeRemember() {
 // function handleChangeAutoLogin() {
 //     Store.dispatch(`${StoreModule.USER}/setAutoLogin`, autoLogin.value)
 // }
+waitForUpgrade.value = true;
+setTimeout(() => {
+    (upgeadeModal.value as any).handleStartCheckVersion();
+}, 500)
 
 function handleClose() {
     (window as any).electron.ipcRenderer.send('login-window-control', 'close');
 }
 async function loginAndSignup() {
     if (!username.value || !password.value) return;
+    if (waitForUpgrade.value) return;
     loading.value  =true;
     if (active.value === 'login') {
         try {
