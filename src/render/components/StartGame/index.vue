@@ -11,11 +11,20 @@ import { useStore } from 'vuex';
 import { StoreModule } from '@core/const/store';
 import { startGame } from '@core/utils/game';
 import { computed } from 'vue';
+import { Modal } from 'ant-design-vue';
 
 const Store = useStore();
 const gameState = computed(() => Store.state[StoreModule.GAME])
 
 function handleStartGame() {
+    if (!gameState.value.gameInstallations?.path) {
+        Modal.error({
+            title: `请先进入设置选择游戏路径`,
+            class: 'custom-error-dialog',
+            okText: '知道了',
+        });
+        return;
+    }
     (window as any).electron.ipcRenderer.send('window-control', 'minimize');
     startGame(gameState.value.gameInstallations?.path);
 }

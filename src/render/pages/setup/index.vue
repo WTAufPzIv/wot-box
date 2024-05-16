@@ -65,12 +65,15 @@ async function handleSearch() {
       cancelText: '取消',
       class: 'custom-error-dialog'
     });
-  } catch {
+  } catch (err: any) {
+    console.log(err)
     Modal.error({
         title: `游戏查找失败，请手动选择游戏路径`,
         class: 'custom-error-dialog',
         okText: '知道了',
     });
+  } finally {
+    Store.dispatch(`${StoreModule.LOADING}/setLoading`, false);
   }
 }
 

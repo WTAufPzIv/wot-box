@@ -103,6 +103,8 @@ export default (mainWindow: BrowserWindow) => {
         dialog.showErrorBox(title, message);
         break;
       case 'search-game-path':
+        // 手动更改vbs目录为保存好的vbs目录
+        regedit.setExternalVBSLocation(path.join(app.getPath('userData'), 'vbs'));
         const regeditPath = 'HKCU\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Compatibility Assistant\\Store';
         regedit.list(regeditPath, (err: any, res: any) => {
           if (err) {

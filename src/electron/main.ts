@@ -117,13 +117,24 @@ const createLoginWindow = () => {
         },
     })
     process.env.VITE_DEV_SERVER_URL && loginWin.loadURL('http://localhost:3000/#/login') || loginWin.loadURL('file://' + path.join(__dirname, '../dist/index.html') + '#/login');
-    const sourcePath = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../../public/7z.exe') : path.join(__dirname, '../dist/7z.exe');
-    const targetPath = path.join(app.getPath('userData'), '7z.exe');
-    fsExt.copyFile(sourcePath, targetPath, (err: any) => {
+    const sourcePathOf7Z = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../../public/7z.exe') : path.join(__dirname, '../dist/7z.exe');
+    const targetPathOf7Z = path.join(app.getPath('userData'), '7z.exe');
+    fsExt.copyFile(sourcePathOf7Z, targetPathOf7Z, (err: any) => {
         if (err) {
             console.error('Error copying 7z.exe:', err);
         } else {
             console.log('7z.exe copied successfully.');
+        }
+    });
+    // 拷贝vbs目录——vbs来源：regedit组件，这是这个组件的bug，在electron打包后执行包里面的vbs会报错，需要把vbs提取出来到压缩包外
+    // 这里提取到userData目录
+    const sourcePathOfVbs = path.join(__dirname, '../vbs')
+    const targetPathOfVbs = path.join(app.getPath('userData'), 'vbs');
+    fsExt.copy(sourcePathOfVbs, targetPathOfVbs, (err: any) => {
+        if (err) {
+            console.error('Error copying vbs:', err);
+        } else {
+            console.log('vbs copied successfully.');
         }
     });
     loginWin.on('closed', () => {

@@ -1,7 +1,8 @@
 {
     "files": [
         "dist/**/*",
-        "dist-electron/**/*"
+        "dist-electron/**/*",
+        "vbs/**/*"
     ],
     "directories": {
         "output": "release"
