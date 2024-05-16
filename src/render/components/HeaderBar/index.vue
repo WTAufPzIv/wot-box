@@ -3,6 +3,7 @@
     <div class="left">
       <img src="@render/assets/wotlogo.png" alt="">
       <p>大德盒子</p>
+      <span>V 0.0.3</span>
     </div>
     <div class="right">
       <MinusOutlined class="win-ctrl" @click="handleMiniMizw" />
@@ -60,6 +61,12 @@ function handleClose() {
         margin: -4px 0 0 20px;
         padding: 0;
         font-weight: bold;
+      }
+      span {
+        color: #fffbed;
+        font-size: 16px;
+        margin-left: 20px;
+        padding: 0;
       }
     }
     .right {

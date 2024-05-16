@@ -1,7 +1,6 @@
 import { sponsorApi } from '@core/const/api';
 import { showErrorByDialog } from '@core/utils/game';
 import { SponsorMutation, StoreModule } from '@src/core/const/store';
-import { sponsorData } from '@src/mock/sponsor';
 import axios from 'axios';
 import { Module, MutationTree, ActionTree } from 'vuex';
 import { IRootState } from '../type';
@@ -21,8 +20,8 @@ export const mutations: MutationTree<ISponsorState> = {
 };
 
 const actions: ActionTree<ISponsorState, IRootState> = {
-    setData({ commit }) {
-        commit(SponsorMutation.SET_SPONSOR_DATA, sponsorData)
+    setData({ commit }, payload) {
+        commit(SponsorMutation.SET_SPONSOR_DATA, payload)
     },
     async fetHomeData({ dispatch }) {
         try {

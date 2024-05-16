@@ -35,6 +35,7 @@ export const getCurrentTime = () => {
 }
 
 export function sortByKey(arr: any[], key: string) {
-    const sortedArr = arr.sort((a, b) => Number(b[key]) - Number(a[key]));
+    const temp = JSON.parse(JSON.stringify(arr));
+    const sortedArr = temp.sort((a: any, b: any) => Number(b[key]) - Number(a[key]));
     return sortedArr;
 }

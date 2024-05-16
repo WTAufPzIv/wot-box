@@ -26,4 +26,6 @@ app
     .use(VueMarkdownEditor)
     .mount('#app');
 
-(window as any).$store = store;
+if ([ 'dev', 'development' ].includes(process.env.NODE_ENV as string)) {
+    (window as any).$store = store;
+}

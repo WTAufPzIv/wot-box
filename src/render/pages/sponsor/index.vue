@@ -44,11 +44,14 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 
 const Store = useStore();
-const sponsorList = computed(() => sortByKey(Store.state[`${StoreModule.SPONSOR}`].sponsorData?.list, 'cash'));
-const wx = computed(() => Store.state[`${StoreModule.SPONSOR}`].sponsorData?.qrcode[0]);
-const alipay = computed(() => Store.state[`${StoreModule.SPONSOR}`].sponsorData?.qrcode[1]);
+const sponsorList = computed(() => {
+    const temp = Store.state[`${StoreModule.SPONSOR}`].sponsorData?.list;
+    return temp && sortByKey(temp, 'cash') || [];
+});
+const wx = computed(() => (Store.state[`${StoreModule.SPONSOR}`].sponsorData?.qrcode || [])[0] || '');
+const alipay = computed(() => (Store.state[`${StoreModule.SPONSOR}`].sponsorData?.qrcode || [])[1] || '');
 
-Store.dispatch(`${StoreModule.SPONSOR}/setData`);
+Store.dispatch(`${StoreModule.SPONSOR}/fetHomeData`);
 </script>
 
 <style scoped lang="less">

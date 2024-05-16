@@ -78,6 +78,7 @@ function handleStartCheckVersion() {
 }
 
 function handleDownload() {
+    message.value = '下载中';
     (window as any).electron.ipcRenderer.on('updatadownloadProgress', (progressObj: any) => {
         progress.value = progressObj.percent.toFixed(1)
     });
