@@ -193,6 +193,9 @@ export default (mainWindow: BrowserWindow) => {
               }
             }
           }
+          if (!fs.existsSync(path.join(gamePath, 'dadevip'))) {
+            fs.mkdirSync(path.join(gamePath, 'dadevip'), { recursive: true });
+          }
           const dadevip_versions = fs.readdirSync(path.join(gamePath, 'dadevip')).filter((folder: any) => folder.startsWith('1.'));
           for (const version of dadevip_versions) {
             const versionPath = path.join(gamePath, 'dadevip', version);

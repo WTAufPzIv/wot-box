@@ -255,7 +255,7 @@ app.whenReady().then(async () => {
         app.on('second-instance', () => {
             if (win) {
                 if (win.isMinimized()) win.restore();
-                if (win.isHiddenInMissionControl()) win.show();
+                win.show();
                 win.focus();
             }
             if (loginWin) {

@@ -71,6 +71,11 @@
       mode="preview"
     ></v-md-editor>
   </a-modal>
+  <UpgeadeModal
+      :open="openUpgrade"
+      @close="openUpgrade=false"
+      ref="upgeadeModal"
+  ></UpgeadeModal>
 </template>
 
 <script setup lang="ts">
@@ -79,10 +84,13 @@ import { computed, ref } from 'vue'
 import { openUrlByBrowser } from '@core/utils/game';
 import { useStore } from 'vuex';
 import { StoreModule } from '@core/const/store';
+import UpgeadeModal from '../../components/UpgradeModal/index.vue';
 
 const Store = useStore();
 Store.dispatch(`${StoreModule.HOME}/fetHomeData`);
 
+const upgeadeModal = ref(null);
+const openUpgrade = ref(false);
 const homeData = computed(() => Store.state[`${StoreModule.HOME}`].homeData);
 const supernews = computed(() => Store.state[`${StoreModule.HOME}`].homeData.supernews);
 const topnews = computed(() => sortByKey(Store.state[`${StoreModule.HOME}`].homeData.topnews, 'updataTime'));
@@ -101,6 +109,10 @@ function handleOpen(news: any) {
 function gotoVideo(url: string) {
   openUrlByBrowser(url);
 }
+
+setTimeout(() => {
+    (upgeadeModal.value as any).handleStartCheckVersion();
+}, 500)
 </script>
 
 <style lang="less" scoped>
