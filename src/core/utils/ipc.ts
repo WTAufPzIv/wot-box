@@ -265,8 +265,8 @@ export default (mainWindow: BrowserWindow) => {
             const targetpath = path.join(wotpath, 'mods', version);
             rimrafSync(targetpath)
           }
-          const targetpath = path.join(wotpath, 'mods', 'configs');
-          rimrafSync(targetpath)
+          const targetpathOfCfg = path.join(wotpath, 'mods', 'configs');
+          rimrafSync(targetpathOfCfg)
           fsExt.ensureDirSync(path.join(wotpath, 'mods', gameVersion));
           const res_mods_versions = fs.readdirSync(path.join(wotpath, 'res_mods')).filter((folder: any) => folder.startsWith('1.'));
           for (const version of res_mods_versions) {
@@ -279,6 +279,8 @@ export default (mainWindow: BrowserWindow) => {
             const targetpath = path.join(wotpath, 'dadevip', version);
             rimrafSync(targetpath)
           }
+          const targetpathOfCfg1 = path.join(wotpath, 'dadevip', 'configs');
+          rimrafSync(targetpathOfCfg1)
           fsExt.ensureDirSync(path.join(wotpath, 'dadevip', gameVersion));
           event.sender.send('clear-all-mods-res', createSuccessIpcMessage(1));
         } catch (error) {
