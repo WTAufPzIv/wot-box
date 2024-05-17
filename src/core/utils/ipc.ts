@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow, dialog, shell } from 'electron'
 import { IipcMessage } from '../const/type';
-import { decrypt, encrypt, killProcess, readAndParseXML, readXvmHtml, readZipRootFolder, sleep, unzipFile } from './files';
+import { decrypt, encrypt, killProcess, readAndParseXML, readXvmHtml, readZipRootFolder, removeReadonlyAttr, sleep, unzipFile } from './files';
 import { app } from 'electron'
 const extractZip = require('extract-zip');
 const path = require('path')
@@ -265,6 +265,8 @@ export default (mainWindow: BrowserWindow) => {
             const targetpath = path.join(wotpath, 'mods', version);
             rimrafSync(targetpath)
           }
+          const targetpath = path.join(wotpath, 'mods', 'configs');
+          rimrafSync(targetpath)
           fsExt.ensureDirSync(path.join(wotpath, 'mods', gameVersion));
           const res_mods_versions = fs.readdirSync(path.join(wotpath, 'res_mods')).filter((folder: any) => folder.startsWith('1.'));
           for (const version of res_mods_versions) {
@@ -441,6 +443,7 @@ export default (mainWindow: BrowserWindow) => {
           writer.on('finish', async () => {
             if(mod.target.startsWith('mods')) {
               try {
+                await removeReadonlyAttr(path.join(wotmodpath, 'mods'));
                 await extractZip(tempZipPath, { dir: wotmodpath });
                 const modName = await readZipRootFolder(tempZipPath);
                 if (modName) {

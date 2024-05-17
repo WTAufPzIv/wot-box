@@ -123,9 +123,20 @@ const createLoginWindow = () => {
         },
     })
     process.env.VITE_DEV_SERVER_URL && loginWin.loadURL('http://localhost:3000/#/login') || loginWin.loadURL('file://' + path.join(__dirname, '../dist/index.html') + '#/login');
+    // 拷贝7z.exe
     const sourcePathOf7Z = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../../public/7z.exe') : path.join(__dirname, '../dist/7z.exe');
     const targetPathOf7Z = path.join(app.getPath('userData'), '7z.exe');
     fsExt.copyFile(sourcePathOf7Z, targetPathOf7Z, (err: any) => {
+        if (err) {
+            console.error('Error copying 7z.exe:', err);
+        } else {
+            console.log('7z.exe copied successfully.');
+        }
+    });
+    // 拷贝7z.dll
+    const sourcePathOf7ZDll = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../../public/7z.dll') : path.join(__dirname, '../dist/7z.dll');
+    const targetPathOf7ZDll = path.join(app.getPath('userData'), '7z.dll');
+    fsExt.copyFile(sourcePathOf7ZDll, targetPathOf7ZDll, (err: any) => {
         if (err) {
             console.error('Error copying 7z.exe:', err);
         } else {

@@ -3,7 +3,7 @@
     <div class="left">
       <img src="@render/assets/wotlogo.png" alt="">
       <p>大德盒子</p>
-      <span>V 1.2.1</span>
+      <span>V 1.2.2</span>
     </div>
     <div class="right">
       <MinusOutlined class="win-ctrl" @click="handleMiniMizw" />

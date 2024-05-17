@@ -6,6 +6,7 @@ const path = require('path')
 const { exec } = require('child_process');
 const { app } = require('electron');
 const { spawn } = require('child_process');
+const fsPromise = require('fs').promises;
 
 // 读取并解析XML文件的函数
 export function readAndParseXML(filePath: string) {
@@ -153,4 +154,24 @@ export function killProcess(name: string) {
             res(1);
         });
     })
+}
+
+// 递归处理目录和文件
+export async function removeReadonlyAttr(dir: string) {
+    const entries = await fsPromise.readdir(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+            // 如果是目录，递归处理
+            await removeReadonlyAttr(fullPath);
+        } else if (entry.isFile()) {
+            // 如果是文件，去除只读属性
+            const stats = await fsPromise.stat(fullPath);
+            const newMode = stats.mode | 0o200; // 添加写权限
+
+            await fsPromise.chmod(fullPath, newMode);
+        }
+    }
 }
