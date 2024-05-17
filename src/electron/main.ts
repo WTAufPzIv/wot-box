@@ -13,7 +13,7 @@ let tray: Tray | null = null;
 let yaml = '';
 let appName = 'wot-box-updater'
 yaml += "provider: generic\n"
-yaml += "url: https://wtaufpziv.github.io/static-test\n"
+yaml += "url: https://vip.123pan.cn/1815268517/wot-box-upgrade\n"
 yaml += "updaterCacheDirName: " + appName
 
 let update_file = [path.join(process.resourcesPath, 'app-update.yml'), yaml]
@@ -47,7 +47,7 @@ function printUpdaterMessage(arg: any, ext = '') {
     loginWin && loginWin.webContents.send("printUpdaterMessage", `${message[arg]??arg} ${ext}`);
 }
 
-autoUpdater.setFeedURL("https://wtaufpziv.github.io/static-test")
+autoUpdater.setFeedURL("https://vip.123pan.cn/1815268517/wot-box-upgrade")
 
 // 是否自动更新，如果为true，当可以更新时(update-available)自动执行更新下载。
 autoUpdater.autoDownload = false

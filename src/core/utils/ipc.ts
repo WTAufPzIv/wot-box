@@ -600,7 +600,7 @@ export default (mainWindow: BrowserWindow) => {
                 const isRunning = output.toLowerCase().includes(processName.toLowerCase());
                 event.sender.send('game_run_status', isRunning ? 'running' : 'stopped');
             });
-        }, 1000); // 每3秒检查一次
+        }, 1000); // 每1秒检查一次
         break;
       case 'stop-check':
         interval && clearInterval(interval);
