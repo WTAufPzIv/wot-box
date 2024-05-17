@@ -143,7 +143,7 @@ const actions: ActionTree<IModState, IRootState> = {
                 })
                 commit(ModMutation.SET_INSTALLED_VIP, temp)
             } else {
-                alert(`vip插件注入错误`+res.message)
+                // alert(`vip插件注入错误`+res.message)
             }
         }
     },
@@ -152,7 +152,7 @@ const actions: ActionTree<IModState, IRootState> = {
         if (res.status) {
             commit(ModMutation.SET_INSTALLED_VIP, {})
         } else {
-            alert(`vip插件注入错误(1)`+res.message)
+            // alert(`vip插件注入错误(1)`+res.message)
         }
     },
 }

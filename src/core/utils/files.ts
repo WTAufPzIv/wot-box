@@ -5,6 +5,7 @@ const JSZip = require('jszip');
 const path = require('path')
 const { exec } = require('child_process');
 const { app } = require('electron');
+const { spawn } = require('child_process');
 
 // 读取并解析XML文件的函数
 export function readAndParseXML(filePath: string) {
@@ -125,6 +126,31 @@ export function unzipFile(zipFilePath: string, outputDir: string, password: stri
                 rej(stderr)
             }
             res(stdout)
+        });
+    })
+}
+
+export function checkProcess(name: string) {
+    return new Promise((res) => {
+        const tasklist = spawn('tasklist');
+          let output = '';
+
+          tasklist.stdout.on('data', (data: any) => {
+              output += data.toString();
+          });
+
+          tasklist.on('close', () => {
+              const isRunning = output.toLowerCase().includes(name.toLowerCase());
+              res(isRunning);
+          });
+    })
+}
+
+export function killProcess(name: string) {
+    return new Promise((res) => {
+        exec(`taskkill /F /IM ${name}`, () => {
+            // do nother
+            res(1);
         });
     })
 }

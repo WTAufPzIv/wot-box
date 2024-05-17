@@ -97,7 +97,7 @@ function createTray() {
     const contextMenu = Menu.buildFromTemplate([
         { label: '退出', type: 'normal', click: async () => {
             win?.webContents.send('app-quit');
-            // await sleep(2000);
+            await sleep(1500);
             app.quit();
         }}
     ]);

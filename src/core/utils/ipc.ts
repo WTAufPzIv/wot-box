@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow, dialog, shell } from 'electron'
 import { IipcMessage } from '../const/type';
-import { decrypt, encrypt, readAndParseXML, readXvmHtml, readZipRootFolder, unzipFile } from './files';
+import { decrypt, encrypt, killProcess, readAndParseXML, readXvmHtml, readZipRootFolder, sleep, unzipFile } from './files';
 import { app } from 'electron'
 const extractZip = require('extract-zip');
 const path = require('path')
@@ -11,6 +11,7 @@ const { rimrafSync } = require('rimraf')
 const { spawn } = require('child_process');
 const tempZipPath = `${app.getPath('temp')}/downloaded.zip`;
 const regedit = require('regedit');
+const { exec } = require('child_process');
 let interval: any = null;
 
 // 程序app data相关路径
@@ -299,22 +300,23 @@ export default (mainWindow: BrowserWindow) => {
             const zipFile = files.find((file: any) => file.endsWith('.zip'));
             if (zipFile) {
               const zipPath = path.join(targetFolder, zipFile);
-              await unzipFile(zipPath, targetFolder, item.password);
-              // const hideCmd = `attrib +h +s ${targetFolder} /S /D`;
-              // exec(hideCmd, (error: any, stdout: any, stderr: any) => {
-              //     if (error) {
-              //       event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(error)));
-              //     }
-              //     if (stderr) {
-              //       event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(stderr)));
-              //     }
-              //     else {
-              //       event.sender.send('extract-vip-res', createSuccessIpcMessage(JSON.stringify(stdout)));
-              //     }
-              // });
+              try {
+                await unzipFile(zipPath, targetFolder, item.password);
+                const hideCmd = `attrib +h +s ${targetFolder} /S /D`;
+                exec(hideCmd, (error: any, stdout: any, stderr: any) => {
+                    if (error || stderr) {
+                      event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(error)));
+                    }
+                    else {
+                      event.sender.send('extract-vip-res', createSuccessIpcMessage(JSON.stringify(stdout)));
+                    }
+                });
+                event.sender.send('extract-vip-res', createSuccessIpcMessage(1));
+              } catch(err: any) {
+                event.sender.send('extract-vip-res', createFailIpcMessage(err));
+              }
             }
           });
-          event.sender.send('extract-vip-res', createSuccessIpcMessage(1));
         } catch(err) {
           event.sender.send('extract-vip-res', createFailIpcMessage(JSON.stringify(err)));
         }
@@ -322,6 +324,17 @@ export default (mainWindow: BrowserWindow) => {
       case 'delete-vip':
         try {
           const { mods } = args;
+          if (JSON.parse(mods).length === 0) {
+            event.sender.send('delete-vip-res', createSuccessIpcMessage(1));
+            return;
+          }
+          // const isGameRuning = await checkProcess('WorldOfTanks.exe')
+          // if (isGameRuning) {
+          //   // showErrorByDialog('警告', '由于注入了VIP插件，关闭盒子将会导致游戏关闭，请勿关闭盒子')
+          //   killProcess('WorldOfTanks.exe')
+          // }
+          await killProcess('WorldOfTanks.exe')
+          await sleep(1000)
           JSON.parse(mods).forEach(async(item: any) => {
             const targetFolder = item.path.replace('dadevip', 'mods')
             rimrafSync(targetFolder); 
@@ -587,7 +600,7 @@ export default (mainWindow: BrowserWindow) => {
                 const isRunning = output.toLowerCase().includes(processName.toLowerCase());
                 event.sender.send('game_run_status', isRunning ? 'running' : 'stopped');
             });
-        }, 3000); // 每3秒检查一次
+        }, 1000); // 每3秒检查一次
         break;
       case 'stop-check':
         interval && clearInterval(interval);
