@@ -203,6 +203,7 @@ async function handleDownload(mod: any) {
             class: 'custom-error-dialog'
         });
         Store.dispatch(`${StoreModule.MODS}/initInstalled`);
+        Store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
     } else {
         Modal.error({
             title: `安装失败${res.message}`,

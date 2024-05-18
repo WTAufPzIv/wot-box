@@ -1,6 +1,6 @@
 const xml2js = require('xml2js')
 const fs = require('fs');
-const crypto = require('crypto');
+const cryptoJS = require('crypto-js');
 const JSZip = require('jszip');
 const path = require('path')
 const { exec } = require('child_process');
@@ -72,23 +72,23 @@ export function readXvmHtml(xvmhtml: string, wgHtml: string, username: string) {
     return battleReport;
 }
 
-const key = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqJH2+lNNCyMhhbUebo2EE2lsD\n3FucSeNGFZTQzcqaFzCo7FfvN9qqfLQb7DxfbDlEkMG5h2W8ohvDdk3G6ZWJLRX1\nBSxIAqwyPQyJX03UtLK82IZrMCL4zjpXEELr7+CepnZN/3qZQp/yTbrEYi263pNt\n6HzAcaqKcdKdDB3DfQIDAQAB\n'; // 密钥，应保密并足够复杂
-const algorithm = 'aes-256-ctr'; // 加密算法
+const key = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqJH2'; // 密钥，应保密并足够复杂
 
 // 加密函数
 export function encrypt(text: string) {
-    const cipher = crypto.createCipher(algorithm, key);
-    let crypted = cipher.update(text, 'utf8', 'hex');
-    crypted += cipher.final('hex');
-    return crypted;
+    const str = JSON.stringify({ str: text });
+    const encJson = cryptoJS.AES.encrypt(str.replace(/[\n]/g, ''), key).toString();
+    // 加密数据不是8的整数倍就会报malformed utf-8 data错误
+    // 对加密数据进行base64处理, 原理：就是先将字符串转换为utf8字符数组，再转换为base64数据
+    return cryptoJS.enc.Base64.stringify(cryptoJS.enc.Utf8.parse(encJson));
 }
   
 // 解密函数
 export function decrypt(text: string) {
-    const decipher = crypto.createDecipher(algorithm, key);
-    let dec = decipher.update(text, 'hex', 'utf8');
-    dec += decipher.final('utf8');
-    return dec;
+    const decData = cryptoJS.enc.Base64.parse(text).toString(cryptoJS.enc.Utf8);
+    //解密数据
+    const decJson = cryptoJS.AES.decrypt(decData, key).toString(cryptoJS.enc.Utf8);
+    return JSON.parse(decJson).str
 }
 
 // 读取压缩包内大德层文件夹

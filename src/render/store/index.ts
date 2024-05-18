@@ -40,7 +40,12 @@ const store = createStore({
             store.subscribe((mutation, state) => {
                 // 用一下这个参数
                 JSON.stringify(mutation)
-                ipcMessageTool('vuex', 'vuex-write', { state: JSON.stringify(state) })
+                const save = JSON.stringify({
+                    [StoreModule.GAME]: state[StoreModule.GAME],
+                    [StoreModule.WN8]: state[StoreModule.WN8],
+                    [StoreModule.USER]: state[StoreModule.USER],
+                })
+                ipcMessageTool('vuex', 'vuex-write', { state: save })
             });
             await store.dispatch(`${StoreModule.MODS}/initInstalled`);
             await store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);

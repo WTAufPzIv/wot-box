@@ -214,6 +214,9 @@ const createWindow = () => {
     })
     process.env.VITE_DEV_SERVER_URL && win.loadURL('http://localhost:3000') || win.loadURL('file://' + path.join(__dirname, '../dist/index.html'));
     ipc(win);
+    win.on('closed', () => {
+        win = null;
+    });
     ipcMain.on('login-window-control', async (event, command) => {
         // 用一下这个参数
         JSON.stringify(event)
@@ -246,9 +249,6 @@ const createWindow = () => {
                  // 12. 立即更新安装
                  autoUpdater.quitAndInstall();
         }
-    });
-    win.on('closed', () => {
-        win = null;
     });
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
         win.webContents.openDevTools();

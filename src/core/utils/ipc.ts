@@ -15,7 +15,7 @@ const { exec } = require('child_process');
 let interval: any = null;
 
 // 程序app data相关路径
-export const STORE_PATH = path.join(app.getPath('userData'), 'store.txt');
+export const STORE_PATH = path.join(app.getPath('userData'), 'local.txt');
 
 function createSuccessIpcMessage(payload: any): IipcMessage {
   return {
@@ -173,7 +173,7 @@ export default (mainWindow: BrowserWindow) => {
             for (const file of files) {
               if (file.startsWith('[大德]')) {
                 try {
-                  const data = fs.readFileSync(path.join(gamePath, 'mods', version, file, 'config.txt'));
+                  const data = fs.readFileSync(path.join(gamePath, 'mods', version, file, 'modinfo.txt'));
                   const installedInfo = JSON.parse(decrypt(data.toString()));
                   // mods文件夹下的vip插件不做检测
                   if (installedInfo.categorize !== 'VIP') {
@@ -184,6 +184,7 @@ export default (mainWindow: BrowserWindow) => {
                     });
                   }
                 } catch {
+                  // 如果没有配置文件，则只读取插件文件夹的名字作为name
                   result.push({
                     path: path.join(gamePath, 'mods', version, file),
                     name: file.replace('[大德]', ''),
@@ -204,7 +205,7 @@ export default (mainWindow: BrowserWindow) => {
             for (const file of files) {
               if (file.startsWith('[大德]')) {
                 try {
-                  const data = fs.readFileSync(path.join(gamePath, 'dadevip', version, file, 'config.txt'));
+                  const data = fs.readFileSync(path.join(gamePath, 'dadevip', version, file, 'modinfo.txt'));
                   result.push({
                     ...JSON.parse(decrypt(data.toString())),
                     path: path.join(gamePath, 'dadevip', version, file),
@@ -234,7 +235,7 @@ export default (mainWindow: BrowserWindow) => {
           const res_mods_versions = fs.readdirSync(path.join(gamePath, 'res_mods')).filter((folder: any) => folder.startsWith('1.'));
           for (const version of res_mods_versions) {
             try {
-              const data = fs.readFileSync(path.join(gamePath, 'res_mods', version, 'text', 'config.txt'));
+              const data = fs.readFileSync(path.join(gamePath, 'res_mods', version, 'text', 'modinfo.txt'));
               result.push(...JSON.parse(decrypt(data.toString())));
             } catch {
               // do nothing
@@ -358,7 +359,7 @@ export default (mainWindow: BrowserWindow) => {
             for (const file of files) {
               if (file.startsWith('[大德]')) {
                 try {
-                  const data = fs.readFileSync(path.join(gamePath, 'mods', version, file, 'config.txt'));
+                  const data = fs.readFileSync(path.join(gamePath, 'mods', version, file, 'modinfo.txt'));
                   const installedInfo = JSON.parse(decrypt(data.toString()));
                   // mods文件夹下的vip插件不做检测
                   if (installedInfo.categorize === 'VIP') {
@@ -449,7 +450,7 @@ export default (mainWindow: BrowserWindow) => {
                 await extractZip(tempZipPath, { dir: wotmodpath });
                 const modName = await readZipRootFolder(tempZipPath);
                 if (modName) {
-                  fs.writeFileSync(path.join(wotmodpath, modName, 'config.txt'), encrypt(JSON.stringify(mod)));
+                  fs.writeFileSync(path.join(wotmodpath, modName, 'modinfo.txt'), encrypt(JSON.stringify({ ...mod, detailMd: '' })));
                   event.sender.send('download-complete', createSuccessIpcMessage(''));
                 } else {
                   event.sender.send('download-complete', createFailIpcMessage('插件解压失败：插件损坏，请联系管理员'));
@@ -466,16 +467,22 @@ export default (mainWindow: BrowserWindow) => {
                 const modName = await readZipRootFolder(tempZipPath, /text\/$/);
                 await extractZip(tempZipPath, { dir: wotmodpath });
                 if (modName) {
-                  if (fs.existsSync(path.join(wotmodpath, modName, 'config.txt'))) {
-                    const data = fs.readFileSync(path.join(wotmodpath, modName, 'config.txt'));
-                    const arr = [
-                      ...JSON.parse(decrypt(data.toString())),
-                      mod,
-                    ]
-                    fs.writeFileSync(path.join(wotmodpath, modName, 'config.txt'), encrypt(JSON.stringify(arr)));
+                  if (fs.existsSync(path.join(wotmodpath, modName, 'modinfo.txt'))) {
+                    const data = fs.readFileSync(path.join(wotmodpath, modName, 'modinfo.txt'));
+                    const oldList = JSON.parse(decrypt(data.toString()));
+                    const hasInstalled = oldList.find((item: any) => {
+                      return item.name === mod.name;
+                    });
+                    if (!hasInstalled) {
+                      const arr = [
+                        ...JSON.parse(decrypt(data.toString())),
+                        { ...mod, detailMd: '' },
+                      ]
+                      fs.writeFileSync(path.join(wotmodpath, modName, 'modinfo.txt'), encrypt(JSON.stringify(arr)));
+                    }
                   } else {
                     const arr = [ mod ];
-                    fs.writeFileSync(path.join(wotmodpath, modName, 'config.txt'), encrypt(JSON.stringify(arr)));
+                    fs.writeFileSync(path.join(wotmodpath, modName, 'modinfo.txt'), encrypt(JSON.stringify(arr)));
                   }
                   event.sender.send('download-complete', createSuccessIpcMessage(''));
                 } else {
@@ -493,7 +500,7 @@ export default (mainWindow: BrowserWindow) => {
                 await extractZip(tempZipPath, { dir: wotmodpath });
                 const modName = await readZipRootFolder(tempZipPath);
                 if (modName) {
-                  fs.writeFileSync(path.join(wotmodpath, modName, 'config.txt'), encrypt(JSON.stringify(mod)));
+                  fs.writeFileSync(path.join(wotmodpath, modName, 'modinfo.txt'), encrypt(JSON.stringify({ ...mod, detailMd: '' },)));
                   event.sender.send('download-complete', createSuccessIpcMessage(''));
                 } else {
                   event.sender.send('download-complete', createFailIpcMessage('插件解压失败：插件损坏，请联系管理员'));
