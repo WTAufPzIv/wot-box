@@ -25,11 +25,14 @@
     </div>
     <div class="right">
       <div class="vedio">
-        <p class="part-name">最新视频</p>
+        <div class="video-title">
+          <p class="part-name">最新视频</p>
+          <span @click="openMoreVideo = true">查看更多 ></span>
+        </div>
         <div class="vedio-list">
           <div
             class="vedio-item"
-            v-for="item in video"
+            v-for="item in video.slice(0, 4)"
             @click="gotoVideo(item.url)"
           >
             <div class="img-wrapper">
@@ -71,6 +74,28 @@
       mode="preview"
     ></v-md-editor>
   </a-modal>
+  <a-modal
+    v-model:open="openMoreVideo"
+    width="1000px"
+    wrap-class-name="news-detail-dialog"
+    :footer="null"
+    :centered="true"
+  >
+      <p class="part-name">最新视频</p>
+      <div class="vedio-list">
+        <div
+          class="vedio-item"
+          v-for="item in video"
+          @click="gotoVideo(item.url)"
+        >
+          <div class="img-wrapper">
+            <img class="image" :src="item.img" alt="" />
+            <div class="mask"></div>
+          </div>
+          <span>{{ item.title }}</span>
+        </div>
+      </div>
+  </a-modal>
   <UpgeadeModal
       :open="openUpgrade"
       @close="openUpgrade=false"
@@ -95,10 +120,11 @@ const homeData = computed(() => Store.state[`${StoreModule.HOME}`].homeData);
 const supernews = computed(() => Store.state[`${StoreModule.HOME}`].homeData.supernews);
 const topnews = computed(() => sortByKey(Store.state[`${StoreModule.HOME}`].homeData.topnews, 'updataTime'));
 const news = computed(() => sortByKey(Store.state[`${StoreModule.HOME}`].homeData.news, 'updataTime'));
-const video = computed(() => Store.state[`${StoreModule.HOME}`].homeData.video);
+const video = computed(() => sortByKey(Store.state[`${StoreModule.HOME}`].homeData.video, 'updataTime'));
 const adv = computed(() => Store.state[`${StoreModule.HOME}`].homeData.adv);
 
 const open = ref(false);
+const openMoreVideo = ref(false);
 const currentNews: any = ref({});
 
 function handleOpen(news: any) {
@@ -222,59 +248,17 @@ setTimeout(() => {
     .vedio {
       width: 450px;
       padding-left: 20px;
-      .vedio-list {
+      .video-title {
+        width: 450px;
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
         justify-content: space-between;
-        margin-top: 24px;
-      }
-      .vedio-item {
-        width: 200px;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 20px;
-        cursor: pointer;
-        position: relative;
-        .img-wrapper {
-          width: 200px;
-          height: 118px;
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          .image {
-            width: 200px;
-            transition: transform .5s,-webkit-transform .5s;
-            // height: 60px;
-          }
-        }
-        .mask {
-          transition: transform .5s,-webkit-transform .5s;
-          position: absolute;
-          width: 200px;
-          height: 118px;
-          left: 0;
-          top: 0;
-          opacity: 0;
-          background-color: rgba(14,14,15,.5);
-        }
+        align-items: center;
         span {
-          font-size: 14px;
-          color: #b8b8a2;
-          margin-top: 10px;
-        }
-        &:hover span {
-          color: #f25322;
-          opacity: 0.8;
-        }
-        &:hover .image {
-          transform: scale(1.1);
-        }
-        &:hover .mask {
-          opacity: 1;
-          transition: opacity 0.5s;
+          color: #e9e2bf;
+          font-size: 16px;
+          margin-right: 16px;
+          cursor: pointer;
         }
       }
     }
@@ -289,14 +273,69 @@ setTimeout(() => {
       }
     }
   }
-  .part-name {
-    color: #e9e2bf;
-    font-size: 24px;
-    font-weight: bolder;
-    margin: 0;
-    padding: 0;
-  }
   
+}
+.part-name {
+  color: #e9e2bf;
+  font-size: 24px;
+  font-weight: bolder;
+  margin: 0;
+  padding: 0;
+}
+.vedio-item {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  cursor: pointer;
+  position: relative;
+  .img-wrapper {
+    width: 200px;
+    height: 118px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    .image {
+      width: 200px;
+      transition: transform .5s,-webkit-transform .5s;
+      // height: 60px;
+    }
+  }
+  .mask {
+    transition: transform .5s,-webkit-transform .5s;
+    position: absolute;
+    width: 200px;
+    height: 118px;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    background-color: rgba(14,14,15,.5);
+  }
+  span {
+    font-size: 14px;
+    color: #b8b8a2;
+    margin-top: 10px;
+  }
+  &:hover span {
+    color: #f25322;
+    opacity: 0.8;
+  }
+  &:hover .image {
+    transform: scale(1.1);
+  }
+  &:hover .mask {
+    opacity: 1;
+    transition: opacity 0.5s;
+  }
+}
+.vedio-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 24px;
 }
 </style>
 
