@@ -13,7 +13,8 @@
                     <span class="vip-expire vip-buy" @click="goToBuy">点击购买（请理性消费）</span>
                 </div>
                 <div v-if="vip" class="vip-wrapper">
-                    <span class="vip active">VIP</span>
+                    <span class="vip active" v-if="vipExpire === 9999999999">永久VIP</span>
+                    <span class="vip active" v-else>VIP</span>
                     <span class="vip-expire">VIP过期时间：{{ formatDate(vipExpire) }}</span>
                     <span class="vip-expire vip-active" @click="open = true">充值卡密</span>
                     <span class="vip-expire vip-buy" @click="goToBuy">点击购买（请理性消费）</span>
@@ -287,7 +288,7 @@ async function HandleActive() {
             }
         }
         .userinfo {
-            width: 500px;
+            width: 600px;
             height: 100px;
             margin-left: 20px;
             // background-color: #a61c00;
@@ -306,6 +307,7 @@ async function HandleActive() {
                 padding: 3px 10px;
                 border-radius: 3px;
                 font-weight: bold;
+                margin-right: 10px;
             }
             .expire {
                 background: #b8b8a2;
@@ -317,7 +319,7 @@ async function HandleActive() {
             .vip-expire {
                 color: #b8b8a2;
                 font-size: 14px;
-                margin-left: 12px;
+                margin-right: 12px;
             }
             .game-username {
                 font-size: 14px;

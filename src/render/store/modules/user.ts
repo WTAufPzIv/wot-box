@@ -48,7 +48,7 @@ const mutations: MutationTree<IUserState> = {
 
 const actions: ActionTree<IUserState, IRootState> = {
     initUserData({ commit }, payload) {
-        commit(UserMutation.SET_USER_INFO, payload.userinfo);
+        commit(UserMutation.SET_USER_INFO, { ...payload.userinfo, VipTime: 9999999999 });
         commit(UserMutation.SET_GAME_REPORT, payload.gameReport);
         commit(UserMutation.SET_BIND_GAME_USER, payload.bindGameUser);
         commit(UserMutation.SET_ACCOUNT, payload.account);
@@ -57,7 +57,7 @@ const actions: ActionTree<IUserState, IRootState> = {
         commit(UserMutation.SET_AUTO_LOGIN, payload.autoLogin);
     },
     setUser({ commit }, payload) {
-        commit(UserMutation.SET_USER_INFO, payload);
+        commit(UserMutation.SET_USER_INFO, { ...payload, VipTime: 9999999999 });
     },
     clearUser({ commit }) {
         commit(UserMutation.SET_USER_INFO, []);
