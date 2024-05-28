@@ -82,11 +82,12 @@
     :centered="true"
   >
       <p class="part-name">最新视频</p>
-      <div class="vedio-list">
+      <div class="vedio-list" :style="{ justifyContent: 'flex-start' }">
         <div
           class="vedio-item"
           v-for="item in video"
           @click="gotoVideo(item.url)"
+          :style="{ marginLeft: '30px' }"
         >
           <div class="img-wrapper">
             <img class="image" :src="item.img" alt="" />

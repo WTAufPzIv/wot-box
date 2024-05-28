@@ -338,7 +338,8 @@ export default (mainWindow: BrowserWindow) => {
           //   // showErrorByDialog('警告', '由于注入了VIP插件，关闭盒子将会导致游戏关闭，请勿关闭盒子')
           //   killProcess('WorldOfTanks.exe')
           // }
-          await killProcess('WorldOfTanks.exe')
+          //此处静默
+          try{await killProcess('WorldOfTanks.exe')} catch {}
           await sleep(1000)
           JSON.parse(mods).forEach(async(item: any) => {
             const targetFolder = item.path.replace('dadevip', 'mods')
@@ -542,7 +543,8 @@ export default (mainWindow: BrowserWindow) => {
             method: 'GET',
             headers: {
               'x-requested-with': 'XMLHttpRequest'
-            }
+            },
+            timeout: 60000
           });
           const { status, data }: any  =response;
           if (status === 200) {
@@ -589,6 +591,7 @@ export default (mainWindow: BrowserWindow) => {
             }
           }
         } catch (err: any) {
+          console.log(err)
           event.sender.send('send-gameuser-id', createFailIpcMessage('用户id请求失败:' + err.toString()));
         }
         // event.sender.send('send-gameuser-id', createSuccessIpcMessage(readXvmHtml(xvmHtml, WgHtml, 'AuroraAksnesNo')));
@@ -609,8 +612,11 @@ export default (mainWindow: BrowserWindow) => {
             });
 
             tasklist.on('close', () => {
-                const isRunning = output.toLowerCase().includes(processName.toLowerCase());
+                const isRunning = output.toLowerCase().includes(processName[0].toLowerCase());
                 event.sender.send('game_run_status', isRunning ? 'running' : 'stopped');
+
+                const isClientRunning = output.toLowerCase().includes(processName[1].toLowerCase());
+                event.sender.send('client_run_status', isClientRunning ? 'client-running' : 'client-stopped');
             });
         }, 1000); // 每1秒检查一次
         break;
@@ -625,7 +631,16 @@ export default (mainWindow: BrowserWindow) => {
         } catch( err: any ) {
           event.sender.send('start-game-res', createFailIpcMessage(err));
         }
-      break;
+        break;
+      case 'stop-client':
+        try {
+          const res = await killProcess('WorldOfTanks.exe')
+          console.log(res);
+        } catch (err: any) {
+          console.log(err.message);
+          event.sender.send('stop-client-res', createFailIpcMessage(err.message));
+        }
+        break;
     }
   });
 }

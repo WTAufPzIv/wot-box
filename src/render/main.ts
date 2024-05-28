@@ -10,6 +10,7 @@ import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
 import Prism from 'prismjs';
+import { openUrlByBrowser } from '@core/utils/game';
 
 const app = createApp(App)
 app.config.performance = true;
@@ -29,3 +30,18 @@ app
 if ([ 'dev', 'development' ].includes(process.env.NODE_ENV as string)) {
     (window as any).$store = store;
 }
+
+//@ts-ignore
+window.open = openUrlByBrowser;
+document.body.addEventListener('click', (event) => {
+    //@ts-ignore
+    if (event.target.tagName === 'A') {
+        //@ts-ignore
+        const href = event.target.getAttribute('href');
+        console.log(href)
+        if (href && `${href}`.startsWith('http')) {
+            event.preventDefault(); // 阻止默认跳转行为
+            openUrlByBrowser(href);
+        }
+    }
+});

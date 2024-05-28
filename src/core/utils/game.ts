@@ -110,7 +110,7 @@ export async function restartApp() {
 }
 
 export async function startCheckGameRun() {
-    return await ipcMessageTool('game-run', 'start-check', { processName: 'lgc.exe' });
+    return await ipcMessageTool('game-run', 'start-check', { processName: [ 'lgc.exe', 'worldoftanks.exe' ] });
 }
 
 export async function stopCheckGameRun() {
@@ -127,4 +127,8 @@ export async function deleteVip(mods: any) {
 
 export async function startGame(path: string) {
     return await ipcMessageTool('game-run', 'start-game', { path: path + '\\lgc_api.exe' }, 'start-game-res');
+}
+
+export async function stopClient() {
+    return await ipcMessageTool('game-run', 'stop-client', {} , 'stop-client-res');
 }

@@ -11,15 +11,25 @@ export interface IgameInstallations {
 
 export interface IGameState {
     gameInstallations: IgameInstallations | null,
+    clientRun: boolean,
+    lgcRun: boolean
 }
 
 export const state: IGameState = {
     gameInstallations: null,
+    clientRun: false,
+    lgcRun: false,
 };
 
 export const mutations: MutationTree<IGameState> = {
     [GameMutation.SET_GAME_INSTALLATIONS](state: IGameState, payload: any) {
         state.gameInstallations = payload;
+    },
+    [GameMutation.SET_CLIENT_RUN](state: IGameState, payload: any) {
+        state.clientRun = payload;
+    },
+    [GameMutation.SET_LGC_RUN](state: IGameState, payload: any) {
+        state.lgcRun = payload;
     },
 };
 
@@ -29,6 +39,12 @@ const actions: ActionTree<IGameState, IRootState> = {
         if (state.gameInstallations) {
             dispatch('checkAllGameInstallation');
         }
+    },
+    setClientRun({ commit }, payload) {
+        commit(GameMutation.SET_CLIENT_RUN, payload)
+    },
+    setLgcRun({ commit }, payload) {
+        commit(GameMutation.SET_LGC_RUN, payload)
     },
     async addGameInstallation({ commit, dispatch }, openDialog: any = null) {
         const res = openDialog ? { status: 1, payload: openDialog.path, message: '' } : await addGamePathByDialog();
