@@ -1,5 +1,5 @@
 <template>
-    <a class="start-game stop" @click="handleStopGame" v-if="!clientRun" key="stop">
+    <a class="start-game stop" @click="handleStopGame" v-if="clientRun" key="stop">
         <PoweroffOutlined class="icon"/>
         <span>
             关闭游戏
