@@ -17,7 +17,19 @@
             </div>
         </div>
         <div class="bottom-bar">
-            <StartGame class="start"></StartGame>
+            <div class="run-status">
+                <div class="run-item">
+                    <img src="@render/assets/lgc_api.png" alt="">
+                    <span>Lesta Game Center：</span>
+                    <span :style="{ color: lgcRun ? '#8FB939' : '#fffbed44' }">{{ lgcRun ? '正在运行' : '未运行' }}</span>
+                </div>
+                <div class="run-item">
+                    <img src="@render/assets/tanki.png" alt="">
+                    <span>World Of Tanks客户端：</span>
+                    <span :style="{ color: clientRun ? '#8FB939' : '#fffbed44' }">{{ clientRun ? '正在运行' : '未运行' }}</span>
+                </div>
+            </div>
+            <StartGame class="btn"></StartGame>
         </div>
     </div>
 
@@ -41,6 +53,8 @@ const route = useRoute();
 const Store = useStore();
 const isLoading = computed(() => Store.state[`${StoreModule.LOADING}`].loading)
 const isLogin = computed(() => route.path === '/login')
+const lgcRun = computed(() => Store.state[`${StoreModule.GAME}`].lgcRun);
+const clientRun = computed(() => Store.state[`${StoreModule.GAME}`].clientRun);
 </script>
 
 <style lang="less" scoped>
@@ -70,11 +84,29 @@ const isLogin = computed(() => route.path === '/login')
     width: 100%;
     height: 100px;
     background-color: rgb(24,24,24);
-    .start {
+    .btn {
         position: absolute;
         right: 30px;
         top: 50%;
         transform: translate( 0, -50%);
+    }
+    .run-status {
+        position: absolute;
+        right: 300px;
+        height: 100px;
+        padding: 10px;
+        .run-item {
+            margin-top: 10px;
+            img {
+                width: 24px;
+                height: 24px;
+            }
+            span {
+                color: #fffbed;
+                font-size: 16px;
+                margin-left: 10px;
+            }
+        }
     }
 }
 .main-container {

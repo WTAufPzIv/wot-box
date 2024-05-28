@@ -8,6 +8,7 @@ const { app } = require('electron');
 const { spawn } = require('child_process');
 const fsPromise = require('fs').promises;
 
+
 // 读取并解析XML文件的函数
 export function readAndParseXML(filePath: string) {
     return new Promise((resolve, reject) => {
@@ -148,10 +149,16 @@ export function checkProcess(name: string) {
 }
 
 export function killProcess(name: string) {
-    return new Promise((res) => {
-        exec(`taskkill /F /IM ${name}`, () => {
+    return new Promise((res, rej) => {
+        exec(`chcp 65001 && taskkill /F /IM ${name}`, (error: any, stdout: any, stderr: any) => {
             // do nother
-            res(1);
+            if (error) {
+                rej(error)
+            }
+            if (stderr) {
+                rej(stderr)
+            }
+            res(stdout)
         });
     })
 }

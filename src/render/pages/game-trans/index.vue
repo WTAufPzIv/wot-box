@@ -66,7 +66,7 @@
                 <p>正在下载 {{ progress }}%  </p>
             </div>
             <div class="speed" v-if="downloading">
-                {{ speed }} KB/S
+                {{ speed }} MB/S
             </div>
         </div>
         <v-md-editor

@@ -1,5 +1,7 @@
 export enum GameMutation {
     SET_GAME_INSTALLATIONS = 'setGameInstallations',
+    SET_CLIENT_RUN = 'setClientRun',
+    SET_LGC_RUN = 'setLgcRun',
 }
 
 export enum ModMutation {
