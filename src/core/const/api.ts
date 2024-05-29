@@ -8,3 +8,5 @@ export const webConf = {
 export const HomeApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365e0053de';
 export const ModsApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365e0702a3';
 export const sponsorApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365e07cffc';
+
+export const buyCardUrl = 'http://123.60.51.151:16666';

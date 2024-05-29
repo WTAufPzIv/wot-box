@@ -132,3 +132,7 @@ export async function startGame(path: string) {
 export async function stopClient() {
     return await ipcMessageTool('game-run', 'stop-client', {} , 'stop-client-res');
 }
+
+export async function openLinkByModal(url: string) {
+    return await ipcMessageTool('window-control', 'open-link', { url });
+}
