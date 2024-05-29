@@ -32,7 +32,6 @@ if ([ 'dev', 'development' ].includes(process.env.NODE_ENV as string)) {
 }
 
 //@ts-ignore
-window.open = openUrlByBrowser;
 document.body.addEventListener('click', (event) => {
     //@ts-ignore
     if (event.target.tagName === 'A') {

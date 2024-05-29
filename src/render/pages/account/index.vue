@@ -84,7 +84,7 @@ import { computed, ref, h } from 'vue';
 import { useStore } from 'vuex';
 import { formatDate } from '../../utils/common';
 import BattleReport from '../../components/BattleReport/index.vue';
-import { closeMainAndOpenLogin, fetchLestaData, openUrlByBrowser, stopCheckGameRun } from '@core/utils/game';
+import { closeMainAndOpenLogin, fetchLestaData, stopCheckGameRun } from '@core/utils/game';
 import { Modal } from 'ant-design-vue';
 import {
     ExclamationCircleOutlined,
@@ -161,7 +161,7 @@ async function handleSearch(gameUsername: string, isAuto: boolean = false) {
     }
 }
 async function goToBuy() {
-    openUrlByBrowser('http://123.60.51.151:16666/');
+    window.open('http://123.60.51.151:16666');
 }
 
 async function refreshUserInfo() {
