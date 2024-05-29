@@ -84,12 +84,13 @@ import { computed, ref, h } from 'vue';
 import { useStore } from 'vuex';
 import { formatDate } from '../../utils/common';
 import BattleReport from '../../components/BattleReport/index.vue';
-import { closeMainAndOpenLogin, fetchLestaData, stopCheckGameRun } from '@core/utils/game';
+import { closeMainAndOpenLogin, fetchLestaData, openLinkByModal, stopCheckGameRun } from '@core/utils/game';
 import { Modal } from 'ant-design-vue';
 import {
     ExclamationCircleOutlined,
 } from '@ant-design/icons-vue'
 import { handleFetchActivateCard, handleFetchLogin, handleFetchLogout } from '@src/render/utils/fetch';
+import { buyCardUrl } from '@core/const/api';
 
 const Store = useStore();
 
@@ -161,7 +162,7 @@ async function handleSearch(gameUsername: string, isAuto: boolean = false) {
     }
 }
 async function goToBuy() {
-    window.open('http://123.60.51.151:16666');
+    openLinkByModal(buyCardUrl);
 }
 
 async function refreshUserInfo() {
