@@ -136,6 +136,7 @@ class CombatlogMonitor(object):
             new_results_atapt['arenaUniqueID'] = results_adapt['arenaUniqueID']
             new_results_atapt['time'] = results_adapt['common']['arenaCreateTime']
             new_results_atapt['winTeam'] = results_adapt['common']['winnerTeam']
+            new_results_atapt['duration'] = results_adapt['common']['duration']
             new_results_atapt['mapName'] = results_adapt['mapName']
             new_results_atapt['leftTeam'] = results_adapt['personal']['team']
             new_results_atapt['hostUserId'] = results_adapt['personal']['accountDBID']

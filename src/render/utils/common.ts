@@ -3,6 +3,16 @@ export function formatDate(timestamp: number | string) {
     return date.toLocaleDateString(); // 这将根据运行代码的浏览器的地区设置来格式化日期
 }
 
+export function formatTime(num: number): string {
+    if (num < 60) {
+        return `${num}秒`;
+    } else {
+        const minutes = Math.floor(num / 60);
+        const seconds = num % 60;
+        return `${minutes}分钟${seconds}秒`;
+    }
+}
+
 export function throttle(func: any, limit: any) {
     let lastFunc :any;
     let lastRan: any;
@@ -34,8 +44,8 @@ export const getCurrentTime = () => {
     return Number(outcome)
 }
 
-export function sortByKey(arr: any[], key: string) {
+export function sortByKey(arr: any[], key: string, down = true) {
     const temp = JSON.parse(JSON.stringify(arr));
-    const sortedArr = temp.sort((a: any, b: any) => Number(b[key]) - Number(a[key]));
+    const sortedArr = down ? temp.sort((a: any, b: any) => Number(b[key]) - Number(a[key])) : temp.sort((a: any, b: any) => Number(a[key]) - Number(b[key]));
     return sortedArr;
 }

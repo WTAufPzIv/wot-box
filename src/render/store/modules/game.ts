@@ -1,5 +1,5 @@
 import { GameMutation, StoreModule } from '@src/core/const/store';
-import { addGamePathByDialog, isWotFolder, parseGameInstallation, showErrorByDialog } from '@core/utils/game';
+import { addGamePathByDialog, checkPythonFile, isWotFolder, parseGameInstallation, showErrorByDialog } from '@core/utils/game';
 import { Module, MutationTree, ActionTree } from 'vuex';
 import { IRootState } from '../type';
 
@@ -34,10 +34,12 @@ export const mutations: MutationTree<IGameState> = {
 };
 
 const actions: ActionTree<IGameState, IRootState> = {
-    initGameState({ commit, dispatch, state }, payload) {
+    async initGameState({ commit, dispatch, state }, payload) {
         commit(GameMutation.SET_GAME_INSTALLATIONS, payload.gameInstallations || null)
         if (state.gameInstallations) {
             dispatch('checkAllGameInstallation');
+            // 应用启动时，检查dadePython.log文件和dadeBattleLog文件夹的状态
+            state.gameInstallations.path && await checkPythonFile(state.gameInstallations.path)
         }
     },
     setClientRun({ commit }, payload) {
@@ -46,7 +48,7 @@ const actions: ActionTree<IGameState, IRootState> = {
     setLgcRun({ commit }, payload) {
         commit(GameMutation.SET_LGC_RUN, payload)
     },
-    async addGameInstallation({ commit, dispatch }, openDialog: any = null) {
+    async addGameInstallation({ commit, dispatch, state }, openDialog: any = null) {
         const res = openDialog ? { status: 1, payload: openDialog.path, message: '' } : await addGamePathByDialog();
         const { status, payload, message } = res;
         if (status && payload) {
@@ -57,8 +59,10 @@ const actions: ActionTree<IGameState, IRootState> = {
                     gameVersion,
                     gameName
                 });
+                state.gameInstallations?.path && await checkPythonFile(state.gameInstallations.path)
                 dispatch(`${StoreModule.MODS}/initInstalledTrans`, null, { root: true });
                 dispatch(`${StoreModule.MODS}/initInstalled`, null, { root: true });
+                dispatch(`${StoreModule.BATTLE}/syncBattleData`, null, { root: true });
             } catch(e) {
                 console.log(e)
                 showErrorByDialog("失败", "解析错误，请确保所选择的文件夹是坦克世界游戏根目录，且保证游戏完成性");

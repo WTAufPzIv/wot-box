@@ -1,7 +1,5 @@
 import { StoreModule } from '@src/core/const/store';
-import { ipcMessageTool, startCheckGameRun, stopCheckGameRun } from '@core/utils/game';
-import { createStore } from 'vuex';
-
+import { createStore, Store } from 'vuex';
 import Game from './modules/game';
 import Mods from './modules/mods';
 import Wn8 from './modules/wn8';
@@ -9,9 +7,19 @@ import User from './modules/user';
 import Loading from './modules/loading';
 import Home from './modules/home';
 import Sponsor from './modules/sponsor';
-import { sleep } from '../utils/common';
+import Battle from './modules/battle';
+import { vuexStore } from './plugins/vuex-store';
+import { gameRun } from './plugins/game-run';
+import { deleteVips } from './plugins/delete-vip';
+import { battleReady } from './plugins/battle-ready';
 
-
+const createSequentialPlugins = (plugins: Function[]) => {
+    return async (store: Store<any>) => {
+        for (const plugin of plugins) {
+            await plugin(store);
+        }
+    };
+};
 
 const store = createStore({
     modules: {
@@ -22,84 +30,16 @@ const store = createStore({
         [StoreModule.LOADING]: Loading,
         [StoreModule.HOME]: Home,
         [StoreModule.SPONSOR]: Sponsor,
+        [StoreModule.BATTLE]: Battle
     },
     plugins: [
-        async (store) => {
-            //   应用启动时，从主进程读取状态
-            (window as any).countries = {};
-            const localStore = await ipcMessageTool('vuex', 'vuex-read', {}, 'vuex-initial-stat')
-            if (localStore.status) {
-                // 读取成功才进行state载入
-                const localState = JSON.parse(localStore.payload);
-                await store.dispatch(`${StoreModule.GAME}/initGameState`, localState[StoreModule.GAME]);
-                localState[StoreModule.WN8] && await store.dispatch(`${StoreModule.WN8}/initHistory`, localState[StoreModule.WN8]);
-                localState[StoreModule.USER] && await store.dispatch(`${StoreModule.USER}/initUserData`, localState[StoreModule.USER]);
-            }
-
-             // 当状态变化时，发送状态到主进程进行存储
-            store.subscribe((mutation, state) => {
-                // 用一下这个参数
-                JSON.stringify(mutation)
-                const save = JSON.stringify({
-                    [StoreModule.GAME]: state[StoreModule.GAME],
-                    [StoreModule.WN8]: state[StoreModule.WN8],
-                    [StoreModule.USER]: state[StoreModule.USER],
-                })
-                ipcMessageTool('vuex', 'vuex-write', { state: save })
-            });
-            await store.dispatch(`${StoreModule.MODS}/initInstalled`);
-            await store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
-            store.dispatch(`${StoreModule.MODS}/initModData`).then(() => {
-                store.dispatch(`${StoreModule.MODS}/initInstalled`);
-                store.dispatch(`${StoreModule.MODS}/initInstalledTrans`);
-            });
-
-            // 清除可能残余的vip插件
-            const gamePath = store.state[`${StoreModule.GAME}`].gameInstallations?.path
-            gamePath && ipcMessageTool('file', 'force-delete-vip', { path: gamePath });
-            // 开始监听lgc_api.exe的运行情况
-            if (!location.href.includes('login')) {
-                (window as any).electron.ipcRenderer.on('game_run_status', async (data: any) => {
-                    const isVip = (store.state[`${StoreModule.USER}`].userinfo.VipTime * 1000 || 0) > new Date().getTime();
-                    if (data === 'running') {
-                        !store.state[`${StoreModule.GAME}`].lgcRun && store.dispatch(`${StoreModule.GAME}/setLgcRun`, true);
-                        if (isVip) {
-                            // // 查找已经安装，但没有解压到mods中的vip插件
-                            const installedList = store.state[`${StoreModule.MODS}`].installed;
-                            const installedVipList = Object.keys(store.state[`${StoreModule.MODS}`].installedVip);
-                            // 解析差异
-                            const needExtract = installedList.filter((element: any) => {
-                                return (!installedVipList.includes(element.name)) && element.categorize === 'VIP'
-                            });
-                            // 存在没解压的插件
-                            if (needExtract.length > 0) {
-                                store.dispatch(`${StoreModule.MODS}/extractVip`, needExtract);
-                            }
-                        }
-                    } else if (data === 'stopped') {
-                        store.state[`${StoreModule.GAME}`].lgcRun && store.dispatch(`${StoreModule.GAME}/setLgcRun`, false);
-                        const installedVipList = Object.keys(store.state[`${StoreModule.MODS}`].installedVip);
-                        if (installedVipList.length > 0) {
-                            store.dispatch(`${StoreModule.MODS}/deleteVip`);
-                        }
-                    }
-                });
-                (window as any).electron.ipcRenderer.on('client_run_status', async (data: any) => {
-                    if (data === 'client-running') {
-                        !store.state[`${StoreModule.GAME}`].clientRun && store.dispatch(`${StoreModule.GAME}/setClientRun`, true);
-                    } else if (data === 'client-stopped') {
-                        store.state[`${StoreModule.GAME}`].clientRun && store.dispatch(`${StoreModule.GAME}/setClientRun`, false);
-                    }
-                });
-                (window as any).electron.ipcRenderer.on('app-quit', async () => {
-                    store.dispatch(`${StoreModule.MODS}/deleteVip`);
-                    await stopCheckGameRun();
-                });
-                await sleep(50);
-                startCheckGameRun();
-            }
-        }
-      ]
+        createSequentialPlugins([
+            vuexStore,
+            deleteVips,
+            gameRun,
+            battleReady
+        ])
+    ]
 });
 
 
