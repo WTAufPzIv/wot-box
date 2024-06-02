@@ -22,7 +22,10 @@ export async function battleReady(store: Store<any>) {
         const res = await ipcMessageTool(
             'axios',
             'get-trans',
-            { url: `${battleResourceAPI}/lesta.json` },
+            {
+                tanUrl: `${battleResourceAPI}/lesta.json`,
+                matUrl: `${battleResourceAPI}/lesta-map.json`,
+            },
             'get-trans-res'
         );
         if (res.status) {

@@ -73,9 +73,16 @@ export function startListenAxios(mainWindow: BrowserWindow) {
             break;
           case 'get-trans':
             try {
-              const { url } = args;
-              const response = await axios.get(url);
-              event.sender.send('get-trans-res', createSuccessIpcMessage(response.data))
+              const { tanUrl, matUrl } = args;
+              const target: any = {};
+              const response = await axios.get(tanUrl);
+              Object.values(response.data['GAME']['tankRenderDatas']).forEach((item: any) => {
+                Object.entries(item).forEach(([key, value]: any) => {
+                  target[key] = value.transName;
+                })
+              })
+              const response1 = await axios.get(matUrl);
+              event.sender.send('get-trans-res', createSuccessIpcMessage({ ...target, ...response1.data }))
             } catch(err) {
               event.sender.send('get-trans-res', createFailIpcMessage(JSON.stringify(err)))
             }
@@ -91,6 +98,10 @@ export function startListenAxios(mainWindow: BrowserWindow) {
               if (filesExist) {
                 const localVersion = JSON.parse(fs.readFileSync(sourceVersionPath)).version;
                 const remoteSourceVersion = sourceVersionResponse.data.version;
+                if (sourceVersionResponse.status !== 200) {
+                  event.sender.send('check-battle-resource-res', createSuccessIpcMessage(JSON.stringify(appDataPath)));
+                  return;
+                }
                 if (localVersion === remoteSourceVersion) {
                   console.log('source exist and source has not been modified');
                   event.sender.send('check-battle-resource-res', createSuccessIpcMessage(JSON.stringify(appDataPath)))

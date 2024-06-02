@@ -18,7 +18,7 @@
               <div class="tank-img" v-if="port">
                 <img :src="`http://localhost:${port}/tanks/${item.mine.tankId.split(':')[1]}.png`" alt="">
               </div>
-              <div class="tank-name">{{ item.mine.tankId.split(':')[1] }}</div>
+              <div class="tank-name">{{ trans[item.mine.tankId.split(':')[1]] }}</div>
               <div class="map-name">{{ trans[item.mapName.split('/')[1]] }}</div>
               <div class="damage">{{ item.mine.damageDealt }}</div>
               <div class="ass">{{ item.mine.damageAssistedTrack + item.mine.damageAssistedRadio }}</div>
@@ -85,7 +85,7 @@
               @click="openUserDetail(item, 'right')"
             >
               <div class="item-name">{{ item.realName }}</div>
-              <div class="item-tank">{{ item.tankId.split(':')[1] }}</div>
+              <div class="item-tank">{{ trans[item.tankId.split(':')[1]] }}</div>
               <div class="item-damage">{{ item.damageDealt }}</div>
               <div class="item-kill">{{ item.kills }}</div>
               <div class="item-xp">{{ item.xp }}</div>
@@ -111,12 +111,12 @@
               <div class="item-xp">{{ item.xp }}</div>
               <div class="item-kill">{{ item.kills }}</div>
               <div class="item-damage">{{ item.damageDealt }}</div>
-              <div class="item-tank">{{ item.tankId.split(':')[1] }}</div>
+              <div class="item-tank">{{ trans[item.tankId.split(':')[1]] }}</div>
               <div class="item-name">{{ item.realName }}</div>
             </div>
           </div>
           <div :class="['detail', openUserTeam]" v-if="openUser">
-            <img :src="`http://localhost:${port}/tanks/${currentUser.tankId.split(':')[1]}.png`" alt="">
+            <img :src="`http://localhost:${port}/tanks/${currentUser.tankId.split(':')[1].toLowerCase()}.png`" alt="">
             <span class="name">{{ currentUser.realName }}</span>
             <div class="close-detail" @click="openUser = false">关闭</div>
             <div class="detail-list">
