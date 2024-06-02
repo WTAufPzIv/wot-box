@@ -6,10 +6,11 @@ import setupComponent from '../pages/setup/index.vue';
 import gameTransComponent from '../pages/game-trans/index.vue';
 import modManageComponent from '../pages/mod-manage/index.vue';
 import modOverviewComponent from '../pages/mod-overview/index.vue';
-import gamerInfoComponents from '../pages/gamer-info/index.vue'
-import adminComponents from '../pages/admin/index.vue'
-import sponsorComponents from '../pages/sponsor/index.vue'
-import userAccount from '../pages/account/index.vue'
+import gamerInfoComponents from '../pages/gamer-info/index.vue';
+import adminComponents from '../pages/admin/index.vue';
+import sponsorComponents from '../pages/sponsor/index.vue';
+import userAccount from '../pages/account/index.vue';
+import battleLog from '../pages/battle-log/index.vue';
 
 // vite直接使用动态path无法解析，https://github.com/vitejs/vite/discussions/2746
 // const dashboardModules =
@@ -72,6 +73,14 @@ const router: IRouter = createRouter({
                 title: '我的账号',
             },
             component: userAccount,
+        },
+        {
+            name: 'icon.battle-log',
+            path: '/battle-log',
+            meta: {
+                title: '战斗日志',
+            },
+            component: battleLog,
         },
         {
             name: 'icon.gamer-info',

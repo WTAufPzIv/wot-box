@@ -36,6 +36,12 @@
         <p>我的账号</p>
       </div>
     </router-link>
+    <router-link to="/battle-log">
+      <div :class="['nav', route.name === 'icon.battle-log' ? 'active': '']">
+        <CalendarOutlined />
+        <p>战斗日志</p>
+      </div>
+    </router-link>
     <router-link to="/gamer-info">
       <div :class="['nav', route.name === 'icon.gamer-info' ? 'active': '']">
         <SearchOutlined />
@@ -78,7 +84,8 @@ import {
   ToolOutlined,
   TranslationOutlined,
   HomeOutlined,
-  SettingOutlined
+  SettingOutlined,
+  CalendarOutlined
 } from '@ant-design/icons-vue';
 import { StoreModule } from '@core/const/store';
 import { useRoute } from 'vue-router'

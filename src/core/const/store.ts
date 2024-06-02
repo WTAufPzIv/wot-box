@@ -46,6 +46,13 @@ export enum SponsorMutation {
     SET_SPONSOR_DATA = 'setSponsorData'
 }
 
+export enum BattleMutation {
+    SET_BATTLES = 'setBattles',
+    ADD_BATTLES = 'addBattles',
+    SET_TRANS = 'setTrans',
+    SET_LOADING = 'setLoading',
+}
+
 export enum StoreModule {
     // 游戏安装信息
     GAME = 'GAME',
@@ -60,5 +67,7 @@ export enum StoreModule {
     // 首页信息
     HOME = 'HOME',
     // 赞助信息
-    SPONSOR = 'SPONSOR'
+    SPONSOR = 'SPONSOR',
+    // 战斗日志信息
+    BATTLE = 'BATTLE',
 }

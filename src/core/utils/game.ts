@@ -30,8 +30,12 @@ export async function addGamePathBySearch(): Promise<any> {
             if (pathArr.length === 0) rej('未查找到游戏');
             for(const item of pathArr) {
                 const temp = item.replace('\\lgc_api.exe', '')
-                const isWot = await isWotFolder(temp);
-                if (isWot) res(temp);
+                try {
+                    const isWot = await isWotFolder(temp);
+                    if (isWot) res(temp);
+                } catch {
+                    // do nothing
+                }
             }
         } else {
             rej(resp.message)
@@ -135,4 +139,16 @@ export async function stopClient() {
 
 export async function openLinkByModal(url: string) {
     return await ipcMessageTool('window-control', 'open-link', { url });
+}
+
+export async function checkPythonFile(path: string) {
+    return await ipcMessageTool('file', 'python-file-ready', { path });
+}
+
+export async function syncBattleLogs(path: string, oldLogsList: string[]) {
+    return await ipcMessageTool('file', 'sync-battle-logs', { path, oldLogsList }, 'sync-battle-logs-res');
+}
+
+export async function getServerPort() {
+    return await ipcMessageTool('server', 'get-server-port', {}, 'port-res');
 }

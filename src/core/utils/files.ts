@@ -7,6 +7,7 @@ const { exec } = require('child_process');
 const { app } = require('electron');
 const { spawn } = require('child_process');
 const fsPromise = require('fs').promises;
+const fsExt = require('fs-extra');
 
 
 // 读取并解析XML文件的函数
@@ -112,7 +113,7 @@ export async function readZipRootFolder(zipFilePath: string, pattern = /\[大德
 }
 
 // 使用7z命令行工具解压压缩包
-export function unzipFile(zipFilePath: string, outputDir: string, password: string) {
+export function unzipFile(zipFilePath: string, outputDir: string, password: string = '') {
     return new Promise((res, rej) => {
         // 构建7z.exe的路径
         const sevenZipPath = path.join(app.getPath('userData'), '7z.exe');
@@ -181,4 +182,39 @@ export async function removeReadonlyAttr(dir: string) {
             await fsPromise.chmod(fullPath, newMode);
         }
     }
+}
+
+// 拷贝一些资源文件到app data
+export async function copyStaticFile() {
+    // 拷贝7z.exe
+    const sourcePathOf7Z = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../../public/7z.exe') : path.join(__dirname, '../dist/7z.exe');
+    const targetPathOf7Z = path.join(app.getPath('userData'), '7z.exe');
+    fsExt.copyFile(sourcePathOf7Z, targetPathOf7Z, (err: any) => {
+        if (err) {
+            console.error('Error copying 7z.exe:', err);
+        } else {
+            console.log('7z.exe copied successfully.');
+        }
+    });
+    // 拷贝7z.dll
+    const sourcePathOf7ZDll = process.env.VITE_DEV_SERVER_URL ? path.join(__dirname, '../../public/7z.dll') : path.join(__dirname, '../dist/7z.dll');
+    const targetPathOf7ZDll = path.join(app.getPath('userData'), '7z.dll');
+    fsExt.copyFile(sourcePathOf7ZDll, targetPathOf7ZDll, (err: any) => {
+        if (err) {
+            console.error('Error copying 7z.exe:', err);
+        } else {
+            console.log('7z.exe copied successfully.');
+        }
+    });
+    // 拷贝vbs目录——vbs来源：regedit组件，这是这个组件的bug，在electron打包后执行包里面的vbs会报错，需要把vbs提取出来到压缩包外
+    // 这里提取到userData目录
+    const sourcePathOfVbs = path.join(__dirname, '../vbs')
+    const targetPathOfVbs = path.join(app.getPath('userData'), 'vbs');
+    fsExt.copy(sourcePathOfVbs, targetPathOfVbs, (err: any) => {
+        if (err) {
+            console.error('Error copying vbs:', err);
+        } else {
+            console.log('vbs copied successfully.');
+        }
+    });
 }

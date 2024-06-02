@@ -10,3 +10,5 @@ export const ModsApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365
 export const sponsorApi = 'http://123.60.51.151:5984/home/ed3ede884e77e23e9324e2365e07cffc';
 
 export const buyCardUrl = 'http://123.60.51.151:16666';
+
+export const battleResourceAPI = 'https://vip.123pan.cn/1815268517/wot-box-battle-source'
