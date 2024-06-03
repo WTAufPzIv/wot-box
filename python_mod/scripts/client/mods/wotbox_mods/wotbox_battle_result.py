@@ -2,12 +2,20 @@ from wotbox_plugin_logger import *
 from PlayerEvents import g_playerEvents
 import copy
 import BigWorld
-DEBUG('success')
-
+import threading
+from Queue import Queue
+from Avatar import PlayerAvatar
+from functools import partial
+from messenger.formatters.service_channel import BattleResultsFormatter
 import json
 from datetime import datetime, date
 from decimal import Decimal
 from types import FunctionType
+
+DEBUG('success111')
+
+battleCache = {}
+
 
 def serialize(obj):
     """JSON serializer for objects not serializable by default json code"""
@@ -31,21 +39,20 @@ def to_json(obj):
     return json.dumps(obj, default=serialize, encoding='latin1', sort_keys=True)
 
 class CombatlogMonitor(object):
-
     def __init__(self):
-        self.start()
         self.resultFilePath = 'dadeBattleLog'
-
+        self.start()
+    
     def __del__(self):
         self.stop()
 
     def start(self):
-        g_playerEvents.onBattleResultsReceived += self.__OnReceiveCombatlog
+        g_playerEvents.onBattleResultsReceived += self.onReceiveCombatlog
 
     def stop(self):
-        g_playerEvents.onBattleResultsReceived -= self.__OnReceiveCombatlog
+        g_playerEvents.onBattleResultsReceived -= self.onReceiveCombatlog
 
-    def __getArenaVehiclesInfo(self):
+    def getArenaVehiclesInfo(self):
         vehicles = {}
         for k, v in BigWorld.player().arena.vehicles.iteritems():
             vehicle = copy.copy(v)
@@ -59,17 +66,25 @@ class CombatlogMonitor(object):
 
         return vehicles
 
-    def __OnReceiveCombatlog(self, isPlayerVehicle, results):
+    def onReceiveCombatlog(self, isPlayerVehicle, results):
         try:
-            print 'enter __OnReceiveCombatlog'
+            print 'enter onReceiveCombatlog'
             results_copy = copy.deepcopy(results)
             print str(results_copy)
             self.__FieldProcess(results_copy)
-            print str(results_copy)
+            print str()
             self.__DelFields(results_copy)
             results_adapt = self.__FieldAdapt(results_copy)
-            results_adapt['vehiclesInfo'] = self.__getArenaVehiclesInfo()
-            results_adapt['mapName'] = BigWorld.player().arena.arenaType.geometry
+            try:
+                results_adapt['vehiclesInfo'] = self.getArenaVehiclesInfo()
+                results_adapt['mapName'] = BigWorld.player().arena.arenaType.geometry
+            except:
+                try:
+                    results_adapt['vehiclesInfo'] = battleCache[results_copy["arenaUniqueID"]]["vehicles"]
+                    results_adapt['mapName'] = battleCache[results_copy["arenaUniqueID"]]["mapName"]
+                except Exception as e:
+                    ERROR('read from battleCache error')
+                    ERROR(e)
             try:
                 json_form = json.dumps(results_adapt, sort_keys=True, encoding='gb2312')
                 DEBUG(json_form)
@@ -271,5 +286,74 @@ class CombatlogMonitor(object):
         with open('{}/{}.txt'.format(self.resultFilePath, id), 'w') as f:
             f.write(json_data)
 
+class BattleResultParser(object):
+    def __init__(self):
+        try:
+            self.Threads = True
+            self.ArenaIDQueue = Queue()
+            self.ResultsCache = []
+            self.ResultsAvailable = threading.Event()
+            self.thread = threading.Thread(target=self.WaitResult)
+            self.thread.setDaemon(True)
+            self.thread.setName('WaitResult')
+            self.thread.start()
+        except Exception as e:
+            ERROR('__init__')
+            ERROR(e)
+
+    def CheckCallback(self, ArenaUniqueID, ErrorCode, battleResults):
+        try:
+            if ErrorCode in [-3, -5]:
+                BigWorld.callback(1.0, lambda: self.ArenaIDQueue.put(ArenaUniqueID))
+            elif ErrorCode >= 0:
+                if ArenaUniqueID in self.ResultsCache: return
+                combatlog_monitor.onReceiveCombatlog(True, battleResults)
+                # print battleResults.get('arenaUniqueID')
+                # print battleResults.get('personal')
+                # print battleResults.get('common')
+        except Exception as e:
+            ERROR('CheckCallback')
+            ERROR(e)
+
+    def WaitResult(self):
+        while self.Threads:
+            ArenaUniqueID = self.ArenaIDQueue.get()
+            self.ResultsAvailable.wait()
+            try:
+                BigWorld.player().battleResultsCache.get(ArenaUniqueID, partial(self.CheckCallback, ArenaUniqueID))
+            except Exception as e:
+                ERROR('WaitResult')
+                ERROR(e)
+                pass
+
+
+def hook_BattleResultsFormatter_format(self, message, *args):
+    arenaUniqueID = message.data.get('arenaUniqueID', 0)
+    bresults.ArenaIDQueue.put(arenaUniqueID)
+    return hooked_BattleResultsFormatter_format(self, message, *args)
+
+def onAccountBecomePlayer():
+    bresults.ResultsAvailable.set()
+
+def IntoBattle():
+    try:
+        battleCache[BigWorld.player().arena.arenaUniqueID] = {
+            "mapName": BigWorld.player().arena.arenaType.geometry,
+            "vehicles": combatlog_monitor.getArenaVehiclesInfo()
+        }
+    except Exception as e:
+        ERROR('IntoBattle')
+        ERROR(e)
+    bresults.ResultsAvailable.clear()
+
+def fini():
+    bresults.Threads = False
 
 combatlog_monitor = CombatlogMonitor()
+bresults = BattleResultParser()
+
+hooked_BattleResultsFormatter_format = BattleResultsFormatter.format
+
+BattleResultsFormatter.format = hook_BattleResultsFormatter_format
+g_playerEvents.onAvatarReady += IntoBattle
+g_playerEvents.onAccountBecomePlayer += onAccountBecomePlayer

@@ -6,7 +6,7 @@ function createModalWindow(mainWindow: BrowserWindow, url: string) {
         modal: true, // 设置为模态窗口
         show: true, // 初始时不显示窗口
         webPreferences: {
-          nodeIntegration: true,
+          nodeIntegration: false,
           contextIsolation: false, // 根据需要调整这些选项
         },
         width: 1500,
