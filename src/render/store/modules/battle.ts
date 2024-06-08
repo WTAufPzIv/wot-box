@@ -1,4 +1,4 @@
-import { syncBattleLogs } from '@core/utils/game';
+import { clearBattleLogs, syncBattleLogs } from '@core/utils/game';
 import { BattleMutation, StoreModule } from '@src/core/const/store';
 import { Modal } from 'ant-design-vue';
 import { Module, MutationTree, ActionTree } from 'vuex';
@@ -40,6 +40,12 @@ const actions: ActionTree<IBattleState, IRootState> = {
         commit(BattleMutation.SET_BATTLES, payload.battles);
         commit(BattleMutation.SET_TRANS, payload.trans);
         dispatch('syncBattleData');
+    },
+    async clearBattle({ rootState }) {
+        const path = rootState[StoreModule.GAME].gameInstallations?.path;
+        if (path) {
+            await clearBattleLogs(rootState[StoreModule.GAME].gameInstallations?.path)
+        }
     },
     async syncBattleData({ rootState, state, dispatch }) {
         const path = rootState[StoreModule.GAME].gameInstallations?.path;

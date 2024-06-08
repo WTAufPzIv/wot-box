@@ -149,6 +149,10 @@ export async function syncBattleLogs(path: string, oldLogsList: string[]) {
     return await ipcMessageTool('file', 'sync-battle-logs', { path, oldLogsList }, 'sync-battle-logs-res');
 }
 
+export async function clearBattleLogs(path: string) {
+    return await ipcMessageTool('file', 'clear-battle-logs', { path }, 'clear-battle-logs-res');
+}
+
 export async function getServerPort() {
     return await ipcMessageTool('server', 'get-server-port', {}, 'port-res');
 }

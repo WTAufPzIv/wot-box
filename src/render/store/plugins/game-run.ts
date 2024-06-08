@@ -40,6 +40,9 @@ export async function gameRun(store: Store<any>) {
                 store.state[`${StoreModule.GAME}`].clientRun && store.dispatch(`${StoreModule.GAME}/setClientRun`, false);
             }
         });
+        // 先清空游戏目录下的战斗日志，防止后续日志增多加大轮训压力
+        await store.dispatch(`${StoreModule.BATTLE}/clearBattle`);
+        console.log(123);
         interval = setInterval(() => {
             store.dispatch(`${StoreModule.BATTLE}/syncBattleData`);
         }, 10000);

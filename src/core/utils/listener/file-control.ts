@@ -281,6 +281,9 @@ export function startListenFile(mainWindow: BrowserWindow) {
               const temp: any = {};
               const files = fs.readdirSync(path.join(wotpath, 'dadeBattleLog'));
 
+              console.log(files)
+              console.log(oldLogsList)
+
               files.forEach((file: string) => {
                 if (file.endsWith('.txt') && !oldLogsList.includes(file)) {
                   const data = fs.readFileSync(path.join(wotpath, 'dadeBattleLog', file), 'utf8');
@@ -291,6 +294,17 @@ export function startListenFile(mainWindow: BrowserWindow) {
             } catch (err) {
               event.sender.send('sync-battle-logs-res', createFailIpcMessage(`同步战斗日志失败：${err}`));
             }
+            break;
+          case 'clear-battle-logs':
+            try {
+              const { path: wotpath } = args;
+              const targetpathOflog = path.join(wotpath, 'dadeBattleLog');
+              fsExt.emptyDirSync (targetpathOflog)
+              event.sender.send('clear-battle-logs-res', createSuccessIpcMessage(1));
+            } catch (err) {
+              event.sender.send('clear-battle-logs-res', createFailIpcMessage(`初始化战斗日志过功能失败：${err}`));
+            }
+            break;
         }
     });
 }
